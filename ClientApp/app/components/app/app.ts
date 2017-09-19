@@ -27,6 +27,13 @@ export class App {
             moduleId: PLATFORM.moduleName('../fetchdata/fetchdata'),
             nav: true,
             title: 'Fetch data'
+        }, {
+            route: 'book',
+            name: 'book',
+            settings: { icon: 'time' },
+            moduleId: PLATFORM.moduleName('../book/book'),
+            nav: true,
+            title: 'Book trailer'
         }]);
 
         this.router = router;

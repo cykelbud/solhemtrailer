@@ -1,0 +1,27 @@
+<template>
+    <h1>Boka släpet genom att välja önskad tid</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>06-09</th>
+                <th>09-12</th>
+                <th>12-15</th>
+                <th>15-18</th>
+                <th>18-06</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr repeat.for="day of days">
+                <td>
+                   ${day.displayText}
+                </td>
+                <td repeat.for="occation of day.occations">
+                    <button type="radio" class="btn btn-default" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</template>
