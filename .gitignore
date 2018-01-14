@@ -235,3 +235,6 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+/WebApp/node_modules
+/WebApp/wwwroot/dist
+/WebApp/Properties/launchSettings.json
