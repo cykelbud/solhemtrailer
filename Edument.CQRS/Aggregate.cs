@@ -10,7 +10,7 @@ namespace Edument.CQRS
     /// Aggregate base class, which factors out some common infrastructure that
     /// all aggregates have (ID and event application).
     /// </summary>
-    public class Aggregate
+    public abstract class Aggregate
     {
         /// <summary>
         /// The number of events loaded into this aggregate.

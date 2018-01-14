@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Core;
 using Edument.CQRS;
@@ -9,6 +6,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Table;
 using ReadModels;
 
 namespace solhemtrailer
@@ -26,6 +26,8 @@ namespace solhemtrailer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            
 
             services.AddSingleton<IMessageDispatcher, MessageDispatcher>();
             services.AddSingleton<IScheduleQueries, Scheduler>();
@@ -61,5 +63,8 @@ namespace solhemtrailer
                     defaults: new { controller = "Home", action = "Index" });
             });
         }
+
+
+
     }
 }
