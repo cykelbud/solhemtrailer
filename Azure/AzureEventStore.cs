@@ -1,124 +1,94 @@
-﻿
-//using System;
-//using System.Collections;
-//using System.Collections.Generic;
-//using Edument.CQRS;
-//using Microsoft.WindowsAzure.Storage.Table;
-//using Newtonsoft.Json;
-//using Streamstone;
+﻿using System;
+using System.Collections;
+using System.Linq;
+using Edument.CQRS;
+using Events;
+using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json;
+using Streamstone;
 
-////using Streamstone;
-////using Newtonsoft.Json;
-////using Microsoft.WindowsAzure.Storage.Table;
+namespace Azure
+{
 
-//namespace SimpleCQRS
-//{
-//    //public interface IEventStore
-//    //{
-//    //    void SaveEvents(Guid aggregateId, Event[] events, int expectedVersion);
-//    //    List<Event> GetEventsForAggregate(Guid aggregateId);
-//    //}
-//    //public interface IEventStore
-//    //{
-//    //    IEnumerable LoadEventsFor<TAggregate>(Guid id);
-//    //    void SaveEventsFor<TAggregate>(Guid id, int eventsLoaded, ArrayList newEvents);
-//    //}
+    public class AzureEventStore : IEventStore
+    {
+        private readonly CloudTable _table;
 
-//    public class EventStore : IEventStore
-//    {
-//        private readonly CloudTable _table;
-//        private readonly IEventPublisher _publisher;
+        public AzureEventStore(IAzureTableFactory azureTableFactory)
+        {
+            _table = azureTableFactory.GetTable();
+        }
 
-//        public EventStore(CloudTable table, IEventPublisher publisher)
-//        {
-//            _publisher = publisher;
-//            _table = table;
-//        }
+        public void SaveEventsFor<TAggregate>(Guid aggregateId, int eventsLoaded, ArrayList newEvents)
+        {
+            var paritionKey = aggregateId.ToString("D");
+            var partition = new Partition(_table, paritionKey);
 
-//        public void SaveEvents(Guid aggregateId, Event[] events, int expectedVersion)
-//        {
-//            var i = expectedVersion;
+            var existent = Stream.TryOpenAsync(partition).GetAwaiter().GetResult();
+            var stream = existent.Found
+                ? existent.Stream
+                : new Stream(partition);
 
-//            // iterate through current aggregate events increasing version with each processed event
-//            foreach (var @event in events)
-//            {
-//                i++;
-//                @event.Version = i;
-//            }
+            if (stream.Version != eventsLoaded)
+                throw new ConcurrencyException();
 
-//            var paritionKey = aggregateId.ToString("D");
-//            var partition = new Partition(_table, paritionKey);
+            try
+            {
+                var events = newEvents.Cast<IEvent>();
+                Stream.WriteAsync(stream, events.Select(ToEventData).ToArray());
+            }
+            catch (ConcurrencyConflictException e)
+            {
+                throw new ConcurrencyException();
+            }
+        }
 
-//            var existent = Stream.TryOpen(partition);
-//            var stream = existent.Found
-//                ? existent.Stream
-//                : new Stream(partition);
+        public IEnumerable LoadEventsFor<TAggregate>(Guid aggregateId)
+        {
+            var paritionKey = aggregateId.ToString("D");
+            var partition = new Partition(_table, paritionKey);
 
-//            if (stream.Version != expectedVersion)
-//                throw new ConcurrencyException();
+            if (!Stream.ExistsAsync(partition).GetAwaiter().GetResult())
+            {
+                throw new AggregateNotFoundException();
+            }
 
-//            try
-//            {
-//                Stream.Write(stream, events.Select(ToEventData).ToArray());
-//            }
-//            catch (ConcurrencyConflictException e)
-//            {
-//                throw new ConcurrencyException();
-//            }
+            return Stream.ReadAsync<EventEntity>(partition).GetAwaiter().GetResult().Events.Select(ToEvent).ToList();
+        }
 
-//            foreach (var @event in events)
-//            {
-//                // publish current event to the bus for further processing by subscribers
-//                _publisher.Publish(@event);
-//            }
-//        }
 
-//        // collect all processed events for given aggregate and return them as a list
-//        // used to build up an aggregate from its history (Domain.LoadsFromHistory)
-//        public List<Event> GetEventsForAggregate(Guid aggregateId)
-//        {
-//            var paritionKey = aggregateId.ToString("D");
-//            var partition = new Partition(_table, paritionKey);
+        static IEvent ToEvent(EventEntity e)
+        {
+            return (IEvent)JsonConvert.DeserializeObject(e.Data, Type.GetType(e.Type));
+        }
 
-//            if (!Stream.Exists(partition))
-//            {
-//                throw new AggregateNotFoundException();
-//            }
+        static EventData ToEventData(IEvent e)
+        {
+            var id = Guid.NewGuid();
 
-//            return Stream.Read<EventEntity>(partition).Events.Select(ToEvent).ToList();
-//        }
+            var properties = new
+            {
+                Id = id,
+                Type = e.GetType().FullName,
+                Data = JsonConvert.SerializeObject(e)
+            };
 
-//        static Event ToEvent(EventEntity e)
-//        {
-//            return (Event)JsonConvert.DeserializeObject(e.Data, Type.GetType(e.Type));
-//        }
+            return new EventData(EventId.From(id), EventProperties.From(properties));
+        }
 
-//        static EventData ToEventData(Event e)
-//        {
-//            var id = Guid.NewGuid();
+        class EventEntity : TableEntity
+        {
+            public string Type { get; set; }
+            public string Data { get; set; }
+        }
 
-//            var properties = new
-//            {
-//                Id = id,
-//                Type = e.GetType().FullName,
-//                Data = JsonConvert.SerializeObject(e)
-//            };
+    }
 
-//            return new EventData(EventId.From(id), EventProperties.From(properties));
-//        }
+    public class AggregateNotFoundException : Exception
+    {
+    }
 
-//        class EventEntity : TableEntity
-//        {
-//            public string Type { get; set; }
-//            public string Data { get; set; }
-//        }
-//    }
-
-//    public class AggregateNotFoundException : Exception
-//    {
-//    }
-
-//    public class ConcurrencyException : Exception
-//    {
-//    }
-//}
+    public class ConcurrencyException : Exception
+    {
+    }
+}

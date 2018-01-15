@@ -1,10 +1,14 @@
 ﻿using System;
+using Edument.CQRS;
 
 namespace Events 
 {
-    public class TrailerBookedEvent
+    public class TrailerBookedEvent : IEvent
     {
-        public Guid EventId { get; set; }
+        public Guid Id { get; set; }
+        public int Version { get; set; }
+
+
         public long BookingId { get; set; }
         public Guid TrailerId { get; set; }
         public DateTime Start { get; set; }

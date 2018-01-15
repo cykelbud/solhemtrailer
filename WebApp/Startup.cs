@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+using Azure;
 using Core;
 using Edument.CQRS;
 using Microsoft.AspNetCore.Builder;
@@ -6,9 +6,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
-using Microsoft.WindowsAzure.Storage.Table;
 using ReadModels;
 
 namespace solhemtrailer
@@ -31,7 +28,8 @@ namespace solhemtrailer
 
             services.AddSingleton<IMessageDispatcher, MessageDispatcher>();
             services.AddSingleton<IScheduleQueries, Scheduler>();
-            services.AddSingleton<IEventStore, InMemoryEventStore>();
+            services.AddSingleton<IAzureTableFactory, AzureTableFactory>();
+            services.AddSingleton<IEventStore, AzureEventStore >();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
