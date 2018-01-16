@@ -25,4 +25,21 @@
         </tbody>
     </table>
     <button click.delegate="add()">click</button>
+
+
+    <ul>
+        <li repeat.for></li>
+        </ul>
+
+    <tr repeat.for="day of days">
+        <td>
+           ${day.displayText}
+        </td>
+        <td repeat.for="occation of day.occations">
+            <button type="radio" class="btn btn-default" aria-label="Left Align" >
+                <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+            </button>
+        </td>
+    </tr>
+
 </template>
