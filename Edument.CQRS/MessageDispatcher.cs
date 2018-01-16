@@ -69,19 +69,20 @@ namespace Edument.CQRS
             if (commandHandlers.ContainsKey(typeof(TCommand)))
                 throw new Exception("Command handler already registered for " + typeof(TCommand).Name);
             
-            commandHandlers.Add(typeof(TCommand), c =>
+            commandHandlers.Add(typeof(TCommand), command =>
                 {
                     // Create an empty aggregate.
                     var agg = new TAggregate();
 
                     // Load the aggregate with events.
-                    agg.Id = ((dynamic)c).Id;
-                    agg.ApplyEvents(eventStore.LoadEventsFor<TAggregate>(agg.Id));
+                    agg.Id = ((dynamic)command).Id;
+                    var allEvents = eventStore.LoadEventsFor<TAggregate>(agg.Id);
+                    agg.ApplyEvents(allEvents);
                     
                     // With everything set up, we invoke the command handler, collecting the
                     // events that it produces.
                     var resultEvents = new ArrayList();
-                    foreach (var e in (agg as IHandleCommand<TCommand>).Handle((TCommand)c))
+                    foreach (var e in (agg as IHandleCommand<TCommand>).Handle((TCommand)command))
                         resultEvents.Add(e);
                     
                     // Store the events in the event store.

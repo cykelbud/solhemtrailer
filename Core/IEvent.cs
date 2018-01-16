@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Events
+namespace Core
 {
     public interface IEvent
     {

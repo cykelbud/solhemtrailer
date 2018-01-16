@@ -1,5 +1,5 @@
 ﻿using System;
-using Edument.CQRS;
+using Core;
 
 namespace Events 
 {
@@ -10,7 +10,6 @@ namespace Events
 
 
         public long BookingId { get; set; }
-        public Guid TrailerId { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
     }

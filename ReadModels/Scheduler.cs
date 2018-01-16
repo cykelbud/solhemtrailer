@@ -17,19 +17,27 @@ namespace ReadModels
         {
             // clear old bookings
             _bookings = _bookings.Where(b => b.Start.Day >= DateTime.Now.Day).ToList();
-
+            var slotsPerDay = 5;
+            var slotLength = 3;
+            var startTime = 8;
             // generate schedule
             var scheduleSlots = new List<ScheduleSlot>();
             for (var day = startDate; day < endDate; day = day.AddDays(1))
             {
-                scheduleSlots.Add(new ScheduleSlot()
+                for (int slot = 1; slot <= slotsPerDay; slot++)
                 {
-                    BookingId = day.Ticks, // startticks
-                    TrailerId = trailerId,
-                    StartTime = day,
-                    EndTime = day.AddDays(1).AddTicks(-1),
-                    IsAvaliable = true,
-                });
+                    var startTime = 
+
+                    var scheduleSlot = new ScheduleSlot()
+                    {
+                        BookingId = day.Ticks, // startticks
+                        TrailerId = trailerId,
+                        StartTime = day,
+                        EndTime = day.AddDays(1).AddTicks(-1),
+                        IsAvaliable = true,
+                    };
+                    scheduleSlots.Add(scheduleSlot);
+                }
             }
             
             // set already booked items to not available
@@ -47,14 +55,14 @@ namespace ReadModels
             return scheduleSlots;
         }
 
-        public void Handle(TrailerBookedEvent e)
+        public void Handle(TrailerBookedEvent @event)
         {
-            _bookings.Add(new Booking() { BookingId = e.BookingId, TrailerId = e.TrailerId, Start = e.Start, End = e.End });
+            _bookings.Add(new Booking() { BookingId = @event.BookingId, TrailerId = @event.Id, Start = @event.Start, End = @event.End });
         }
 
-        public void Handle(TrailerBookingCanceledEvent e)
+        public void Handle(TrailerBookingCanceledEvent @event)
         {
-            var booking = _bookings.SingleOrDefault(b => b.BookingId == e.BookingId);
+            var booking = _bookings.SingleOrDefault(b => b.BookingId == @event.BookingId);
             if (booking == null)
             {
                 return;

@@ -8,6 +8,6 @@ namespace Edument.CQRS
 {
     public interface IHandleCommand<TCommand>
     {
-        IEnumerable Handle(TCommand c);
+        IEnumerable Handle(TCommand command);
     }
 }

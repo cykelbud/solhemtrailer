@@ -16,47 +16,47 @@ namespace Trailer
     {
         readonly List<Booking> _bookings = new List<Booking>();
 
-        public IEnumerable Handle(BookTrailerCommand c)
+        public IEnumerable Handle(BookTrailerCommand command)
         {
             // check trailer is not booked at that time
             if (_bookings.Any(b =>
-                (b.Start.Ticks >= c.Start.Ticks && b.Start.Ticks <= c.End.Ticks) ||
-                (b.End.Ticks >= c.Start.Ticks && b.End.Ticks <= c.End.Ticks) 
+                (b.Start.Ticks >= command.Start.Ticks && b.Start.Ticks <= command.End.Ticks) ||
+                (b.End.Ticks >= command.Start.Ticks && b.End.Ticks <= command.End.Ticks) 
             ))
             {
-                throw new BookingAlreadyExistsException(c.BookingId);
+                throw new BookingAlreadyExistsException(command.BookingId);
             }
 
             //call this
             yield return new TrailerBookedEvent
             {
-                BookingId = c.BookingId,
-                TrailerId = c.TrailerId,
-                Start = c.Start,
-                End = c.End
+                Id = command.Id,
+                BookingId = command.BookingId,
+                Start = command.Start,
+                End = command.End
             };
         }
 
-        public IEnumerable Handle(CancelBookingCommand c)
+        public IEnumerable Handle(CancelBookingCommand command)
         {
-            if (_bookings.All(b => b.BookingId != c.BookingId))
+            if (_bookings.All(b => b.BookingId != command.BookingId))
             {
-                throw new BookingDoesNotExist(c.BookingId);
+                throw new BookingDoesNotExist(command.BookingId);
             }
 
             yield return new TrailerBookingCanceledEvent
             {
-                BookingId = c.BookingId,
+                BookingId = command.BookingId,
             };
         }
 
-        public void Apply(TrailerBookedEvent e)
+        public void Apply(TrailerBookedEvent @event)
         {
-            _bookings.Add(new Booking() { BookingId = e.BookingId, TrailerId = e.TrailerId, Start = e.Start, End = e.End });
+            _bookings.Add(new Booking() { BookingId = @event.BookingId, TrailerId = @event.Id, Start = @event.Start, End = @event.End });
         }
-        public void Apply(TrailerBookingCanceledEvent e)
+        public void Apply(TrailerBookingCanceledEvent @event)
         {
-            var booking = _bookings.Single(b => b.BookingId == e.BookingId);
+            var booking = _bookings.Single(b => b.BookingId == @event.BookingId);
             _bookings.Remove(booking);
         }
     }

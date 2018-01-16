@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using Core;
 using Edument.CQRS;
 using Events;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -17,6 +18,24 @@ namespace Azure
         public AzureEventStore(IAzureTableFactory azureTableFactory)
         {
             _table = azureTableFactory.GetTable();
+
+           
+
+
+        }
+
+        private void checkStream(Partition p)
+        {
+            if (!Stream.ExistsAsync(p).GetAwaiter().GetResult())
+            {
+                var stream = Stream.ProvisionAsync(p).GetAwaiter().GetResult();
+                Console.WriteLine("Provisioned new empty stream in partition '{0}'", stream.Partition);
+                Console.WriteLine("Etag: {0}", stream.ETag);
+                Console.WriteLine("Version: {0}", stream.Version);
+            }
+
+           
+
         }
 
         public void SaveEventsFor<TAggregate>(Guid aggregateId, int eventsLoaded, ArrayList newEvents)
@@ -50,7 +69,7 @@ namespace Azure
 
             if (!Stream.ExistsAsync(partition).GetAwaiter().GetResult())
             {
-                throw new AggregateNotFoundException();
+                    throw new AggregateNotFoundException();
             }
 
             return Stream.ReadAsync<EventEntity>(partition).GetAwaiter().GetResult().Events.Select(ToEvent).ToList();
@@ -59,7 +78,21 @@ namespace Azure
 
         static IEvent ToEvent(EventEntity e)
         {
-            return (IEvent)JsonConvert.DeserializeObject(e.Data, Type.GetType(e.Type));
+            var eeee = new TrailerBookedEvent();
+            var ee = new TrailerBookingCanceledEvent();
+
+            object json = null;
+
+            if (e.Type == "Events.TrailerBookedEvent")
+            {
+                json = JsonConvert.DeserializeObject<TrailerBookedEvent>(e.Data);
+
+            }
+            if (e.Type == "Events.TrailerBookingCanceledEvent")
+            {
+                json = JsonConvert.DeserializeObject<TrailerBookingCanceledEvent>(e.Data);
+            }
+            return (IEvent)json;
         }
 
         static EventData ToEventData(IEvent e)

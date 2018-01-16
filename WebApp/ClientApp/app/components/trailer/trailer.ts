@@ -39,12 +39,32 @@ export class Trailer {
 
     }
 
+    public async add()  {
+        let request : IBookRequest = {
+            SlotId : 1,
+            Email : "mail",
+            EndDate : '2018-01-19',
+            StartDate : '2018-01-18',
+            Phone : '1234567'
+        }
+        await this.api.post('book', request);
+    }
+
+
 
     async getItem() : Promise<string> {
         let item = await this.api.find('GetBookableItemList/cc2ea8334e894cb2a9c9452efadbeb90');
         return <string>item[0].Id;
     }
         
+}
+
+interface IBookRequest {
+    SlotId : number;
+    StartDate : string;
+    EndDate : string;
+    Email : string;
+    Phone : string;
 }
 
 interface ISlot {

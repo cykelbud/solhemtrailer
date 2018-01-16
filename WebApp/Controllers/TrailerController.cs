@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Azure;
 using Core;
 using Edument.CQRS;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,13 @@ namespace solhemtrailer.Controllers
     {
         private readonly IMessageDispatcher _dispatcher;
         private readonly IScheduleQueries _scheduleQueries;
+        private readonly Guid _trailerId;
 
         public TrailerController(IMessageDispatcher dispatcher, IScheduleQueries scheduleQueries)
         {
             _dispatcher = dispatcher;
             _scheduleQueries = scheduleQueries;
+            _trailerId = Constants.TrailerId;
         }
 
 
@@ -35,18 +38,18 @@ namespace solhemtrailer.Controllers
 
             var startDate = DateTime.Parse(request.StartDate);
             var endDate = DateTime.Parse(request.EndDate);
-            var slots = _scheduleQueries.GetBookingSchedule(Guid.Empty, startDate, endDate);
+            var slots = _scheduleQueries.GetBookingSchedule(_trailerId, startDate, endDate);
 
             return slots;
         }
 
-        [HttpPost]
-        public JsonResult Book(BookSlotRequest request)
+        [HttpPost("book")]
+        public JsonResult Book([FromBody] BookSlotRequest request)
         {
             _dispatcher.SendCommand(new BookTrailerCommand()
             {
+                Id = _trailerId,
                 BookingId = request.SlotId,
-                TrailerId = Guid.Empty,
                 Start = request.StartDate,
                 End = request.EndDate,
                 Email = request.Email,
@@ -54,8 +57,6 @@ namespace solhemtrailer.Controllers
             });
             return Json(Ok());
         }
-
-
 
     }
 

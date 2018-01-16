@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Edument.CQRS\Edument.CQRS.csproj" />
     <ProjectReference Include="..\Events\Events.csproj" />
   </ItemGroup>

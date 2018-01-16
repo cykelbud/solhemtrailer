@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ReadModels;
+using Trailer;
 
 namespace solhemtrailer
 {
@@ -24,12 +25,10 @@ namespace solhemtrailer
         {
             services.AddMvc();
 
-            
-
-            services.AddSingleton<IMessageDispatcher, MessageDispatcher>();
             services.AddSingleton<IScheduleQueries, Scheduler>();
-            services.AddSingleton<IAzureTableFactory, AzureTableFactory>();
+            services.AddTransient<IAzureTableFactory, AzureTableFactory>();
             services.AddSingleton<IEventStore, AzureEventStore >();
+            services.AddSingleton<IMessageDispatcher, MessageDispatcher>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,6 +46,12 @@ namespace solhemtrailer
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            // wireup
+            var commandHandler = new TrailerAggregate();
+            var readmodel = app.ApplicationServices.GetService<IScheduleQueries>();
+            app.ApplicationServices.GetService<IMessageDispatcher>().ScanInstance(commandHandler);
+            app.ApplicationServices.GetService<IMessageDispatcher>().ScanInstance(readmodel);
 
             app.UseStaticFiles();
 

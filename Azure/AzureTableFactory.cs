@@ -12,15 +12,18 @@ namespace Azure
             //var table = GetTableAsync().GetAwaiter().GetResult();
 
 
-            var token = "?sv=2017-04-17&ss=t&srt=sco&sp=rwdlacu&se=2019-01-15T00:10:26Z&st=2018-01-14T16:10:26Z&spr=https&sig=ITMU4faYIrrXlvxeKdi6iKa7bcjPwsDc6I0q8m1TVUM%3D";
             //Account
             CloudStorageAccount storageAccount =
-                CloudStorageAccount.Parse(
-                    "DefaultEndpointsProtocol=https;AccountName=solhemtrailer;AccountKey=LqzKFHhs0z4TqoRBvru7Q4gyl/V90A6ZV0+6il69U0siZGaomqtTadPOcB29UPTiiT2SdQYUpDgQ4XbyYqcY7A==;EndpointSuffix=core.windows.net");
+                //CloudStorageAccount.DevelopmentStorageAccount;
+                new CloudStorageAccount(new StorageCredentials("solhemtrailer",
+                    "LqzKFHhs0z4TqoRBvru7Q4gyl/V90A6ZV0+6il69U0siZGaomqtTadPOcB29UPTiiT2SdQYUpDgQ4XbyYqcY7A=="), true);
+                
+                //CloudStorageAccount.Parse(
+                //    "DefaultEndpointsProtocol=https;AccountName=solhemtrailer;AccountKey=LqzKFHhs0z4TqoRBvru7Q4gyl/V90A6ZV0+6il69U0siZGaomqtTadPOcB29UPTiiT2SdQYUpDgQ4XbyYqcY7A==;EndpointSuffix=core.windows.net");
 
 
-                //new CloudStorageAccount(
-                //new StorageCredentials(token), true);
+            //new CloudStorageAccount(
+            //new StorageCredentials(token), true);
 
             //Client
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
@@ -29,6 +32,8 @@ namespace Azure
             CloudTable table = tableClient.GetTableReference("bookings");
             await table.CreateIfNotExistsAsync();
 
+
+
             return table;
         }
 
@@ -36,5 +41,7 @@ namespace Azure
         {
             return GetTableAsync().GetAwaiter().GetResult();
         }
+
+
     }
 }

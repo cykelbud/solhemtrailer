@@ -12,6 +12,6 @@ namespace Edument.CQRS
     /// <typeparam name="TEvent"></typeparam>
     public interface ISubscribeTo<TEvent>
     {
-        void Handle(TEvent e);
+        void Handle(TEvent @event);
     }
 }

@@ -11,6 +11,6 @@ namespace Edument.CQRS
     /// <typeparam name="TEvent"></typeparam>
     public interface IApplyEvent<TEvent>
     {
-        void Apply(TEvent e);
+        void Apply(TEvent @event);
     }
 }
