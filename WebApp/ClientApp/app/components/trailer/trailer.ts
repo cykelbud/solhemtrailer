@@ -6,6 +6,7 @@ import { HttpClient } from 'aurelia-fetch-client';
 export class Trailer {
     days : Array<Day>;
     api : Rest;
+    slots : ISlot[];
 
     constructor(config: Config) {
         this.api = config.getEndpoint('trailer');
@@ -21,10 +22,12 @@ export class Trailer {
         // let slots = await result.json() as Promise<ISlot[]>;
 
 
-        let slots : ISlot[] = await this.api.find('slots');
+        this.slots = await this.api.find('slots');
 
+        let schema = this.groupBy(this.slots, 'Date');
 
-         console.log(slots);
+        console.log(schema);
+         console.log(this.slots);
 
 
         // let day = new Day();
@@ -56,6 +59,13 @@ export class Trailer {
         let item = await this.api.find('GetBookableItemList/cc2ea8334e894cb2a9c9452efadbeb90');
         return <string>item[0].Id;
     }
+
+    groupBy = function(xs : any, key : any) {
+        return xs.reduce(function(rv : any, x : any) {
+          (rv[x[key]] = rv[x[key]] || []).push(x);
+          return rv;
+        }, {});
+    };
         
 }
 
@@ -73,6 +83,7 @@ interface ISlot {
     StartTime : Date;
     EndTime : Date;
     IsAvailable : boolean;
+    Date : string;
 }
 
 class Day {

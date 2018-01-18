@@ -6,6 +6,7 @@ namespace Core
     {
         public Guid TrailerId { get; set; }
         public long BookingId { get; set; }
+        public string Date { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public bool IsAvaliable { get; set; }

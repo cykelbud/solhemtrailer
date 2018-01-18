@@ -69,7 +69,12 @@ namespace Azure
 
             if (!Stream.ExistsAsync(partition).GetAwaiter().GetResult())
             {
+                checkStream(partition);
+                if (!Stream.ExistsAsync(partition).GetAwaiter().GetResult())
+                {
                     throw new AggregateNotFoundException();
+
+                }
             }
 
             return Stream.ReadAsync<EventEntity>(partition).GetAwaiter().GetResult().Events.Select(ToEvent).ToList();

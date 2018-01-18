@@ -35,6 +35,7 @@ namespace ReadModels
                         StartTime = startTime,
                         EndTime = startTime.AddHours(slotLength).AddTicks(-1),
                         IsAvaliable = true,
+                        Date = startDate.ToShortDateString()
                     };
                     scheduleSlots.Add(scheduleSlot);
                 }
