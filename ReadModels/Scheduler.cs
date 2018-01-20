@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core;
-using Edument.CQRS;
 using Events;
 
 namespace ReadModels
@@ -11,15 +10,13 @@ namespace ReadModels
         ISubscribeTo<TrailerBookedEvent>,
         ISubscribeTo<TrailerBookingCanceledEvent>
     {
-        private List<Booking> _bookings = new List<Booking>();
+        private readonly List<Booking> _bookings = new List<Booking>();
 
         public IEnumerable<ScheduleSlot> GetBookingSchedule(Guid trailerId, DateTime startDate, DateTime endDate)
         {
-            // clear old bookings
-            _bookings = _bookings.Where(b => b.Start.Day >= DateTime.Now.Day).ToList();
             var slotsPerDay = 5;
             var slotLength = 3;
-            var startHrs = 8;
+            var startHrs = 6;
             // generate schedule
             var scheduleSlots = new List<ScheduleSlot>();
             for (var day = startDate; day < endDate; day = day.AddDays(1))
@@ -32,8 +29,8 @@ namespace ReadModels
                     {
                         BookingId = day.Ticks, // startticks
                         TrailerId = trailerId,
-                        StartTime = startTime,
-                        EndTime = startTime.AddHours(slotLength).AddTicks(-1),
+                        StartTime = startTime.Ticks,
+                        EndTime = startTime.AddHours(slotLength).Ticks,
                         IsAvaliable = true,
                         Date = startDate.ToShortDateString()
                     };
@@ -44,9 +41,9 @@ namespace ReadModels
             // set already booked items to not available
             scheduleSlots.ForEach(s =>
             {
-                if (_bookings.Any(b =>
-                    (b.Start.Ticks >= s.StartTime.Ticks && b.Start.Ticks <= s.EndTime.Ticks) ||
-                    (b.End.Ticks >= s.StartTime.Ticks && b.End.Ticks <= s.EndTime.Ticks)
+                if (_bookings.Any(booking =>
+                    (booking.Start >= s.StartTime && booking.Start < s.EndTime) ||
+                    (booking.End > s.StartTime && booking.End <= s.EndTime)
                 ))
                 {
                     s.IsAvaliable = false;
@@ -54,6 +51,11 @@ namespace ReadModels
             });
             
             return scheduleSlots;
+        }
+
+        public IEnumerable<Booking> GetAll()
+        {
+            return _bookings;
         }
 
         public void Handle(TrailerBookedEvent @event)
@@ -70,5 +72,6 @@ namespace ReadModels
             }
             _bookings.Remove(booking);
         }
+
     }
 }

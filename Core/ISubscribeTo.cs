@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Edument.CQRS
+﻿namespace Core
 {
     /// <summary>
     /// Implemented by anything that wishes to subscribe to an event emitted by
     /// an aggregate and successfully stored.
     /// </summary>
     /// <typeparam name="TEvent"></typeparam>
-    public interface ISubscribeTo<TEvent>
+    public interface ISubscribeTo<in TEvent>
     {
         void Handle(TEvent @event);
     }

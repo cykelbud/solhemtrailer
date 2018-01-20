@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
 using Edument.CQRS;
 using Events;
 
@@ -19,9 +20,9 @@ namespace Trailer
         public IEnumerable Handle(BookTrailerCommand command)
         {
             // check trailer is not booked at that time
-            if (_bookings.Any(b =>
-                (b.Start.Ticks >= command.Start.Ticks && b.Start.Ticks <= command.End.Ticks) ||
-                (b.End.Ticks >= command.Start.Ticks && b.End.Ticks <= command.End.Ticks) 
+            if (_bookings.Any(booking =>
+                (booking.Start >= command.Start && booking.Start < command.End) ||
+                (booking.End > command.Start && booking.End <= command.End) 
             ))
             {
                 throw new BookingAlreadyExistsException(command.BookingId);
@@ -65,7 +66,7 @@ namespace Trailer
     {
         public long BookingId { get; set; }
         public Guid TrailerId { get; set; }
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
+        public long Start { get; set; }
+        public long End { get; set; }
     }
 }

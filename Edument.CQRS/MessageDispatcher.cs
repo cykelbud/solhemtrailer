@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 using System.Reflection;
+using Core;
 
 namespace Edument.CQRS
 {
@@ -55,6 +56,14 @@ namespace Edument.CQRS
             if (eventSubscribers.ContainsKey(eventType))
                 foreach (var sub in eventSubscribers[eventType])
                     sub(e);
+        }
+
+        public void PublishEvents(IEnumerable<IEvent> @events)
+        {
+            foreach (var @event in @events)
+            {
+                PublishEvent(@event);
+            }
         }
 
         /// <summary>

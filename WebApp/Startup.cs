@@ -1,11 +1,14 @@
+using System.Linq;
 using Azure;
 using Core;
 using Edument.CQRS;
+using Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Serialization;
 using ReadModels;
 using Trailer;
 
@@ -23,7 +26,13 @@ namespace solhemtrailer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(options =>
+            {
+                var settings = options.SerializerSettings;
+                settings.ContractResolver = new DefaultContractResolver();
+                // do something with settings
+            });
 
             services.AddSingleton<IScheduleQueries, Scheduler>();
             services.AddTransient<IAzureTableFactory, AzureTableFactory>();
@@ -44,14 +53,28 @@ namespace solhemtrailer
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseDeveloperExceptionPage();
+                //app.UseExceptionHandler("/Home/Error");
             }
 
             // wireup
             var commandHandler = new TrailerAggregate();
             var readmodel = app.ApplicationServices.GetService<IScheduleQueries>();
-            app.ApplicationServices.GetService<IMessageDispatcher>().ScanInstance(commandHandler);
-            app.ApplicationServices.GetService<IMessageDispatcher>().ScanInstance(readmodel);
+            var messageDispatcher = app.ApplicationServices.GetService<IMessageDispatcher>();
+            var eventStore = app.ApplicationServices.GetService<IEventStore>();
+
+            messageDispatcher.ScanInstance(commandHandler);
+            messageDispatcher.ScanInstance(readmodel);
+
+            // ladda readmodel för scheduler, en egen dispatcher 
+            var dispatcher = new MessageDispatcher(eventStore);
+            dispatcher.AddSubscriberFor<TrailerBookedEvent>((Scheduler)readmodel);
+            dispatcher.AddSubscriberFor<TrailerBookingCanceledEvent>((Scheduler)readmodel);
+            var allevents = eventStore.LoadEventsFor<object>(Constants.TrailerId);
+            dispatcher.PublishEvents(allevents.Cast<IEvent>());
+
+
+
 
             app.UseStaticFiles();
 

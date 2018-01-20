@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Edument.CQRS
+namespace Core
 {
     public interface IMessageDispatcher
     {
@@ -43,5 +43,6 @@ namespace Edument.CQRS
         /// </summary>
         /// <param name="instance"></param>
         void ScanInstance(object instance);
+
     }
 }

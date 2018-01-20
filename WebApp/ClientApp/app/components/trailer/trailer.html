@@ -12,23 +12,26 @@
             </tr>
         </thead>
         <tbody>
-            <tr repeat.for="day of days">
+            <tr repeat.for="day of slots">
                 <td>
-                   ${day.displayText}
+                   ${day[0].Date}
                 </td>
-                <td repeat.for="occation of day.occations">
-                    <button type="radio" class="btn btn-default" aria-label="Left Align" >
-                        <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                <td repeat.for="slot of day">
+                    <button type="radio" class="btn btn-default" aria-label="Left Align" click.delegate="add(slot)">
+                        <span if.bind="slot.IsAvaliable" class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                        <span if.bind="!slot.IsAvaliable" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        
                     </button>
                 </td>
             </tr>
         </tbody>
     </table>
-    <button click.delegate="add()">click</button>
+
+    <button click.delegate="getAll()">get all bookings</button>
 
 
     <ul>
-        <li repeat.for="slot of slots">${slot.Date} asf</li>
+        <li repeat.for="booking of all">${getJson(booking)}</li>
     </ul>
 
 

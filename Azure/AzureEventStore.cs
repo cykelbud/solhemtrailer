@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Linq;
 using Core;
-using Edument.CQRS;
 using Events;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
@@ -18,10 +17,6 @@ namespace Azure
         public AzureEventStore(IAzureTableFactory azureTableFactory)
         {
             _table = azureTableFactory.GetTable();
-
-           
-
-
         }
 
         private void checkStream(Partition p)
@@ -67,9 +62,15 @@ namespace Azure
             var paritionKey = aggregateId.ToString("D");
             var partition = new Partition(_table, paritionKey);
 
+            //var existent = Stream.TryOpenAsync(partition).GetAwaiter().GetResult();
+            //var stream = existent.Found
+            //    ? existent.Stream
+            //    : new Stream(partition);
+            //var stream = Stream.ProvisionAsync(partition).GetAwaiter().GetResult();
+
             if (!Stream.ExistsAsync(partition).GetAwaiter().GetResult())
             {
-                checkStream(partition);
+                var stream = Stream.ProvisionAsync(partition).GetAwaiter().GetResult();
                 if (!Stream.ExistsAsync(partition).GetAwaiter().GetResult())
                 {
                     throw new AggregateNotFoundException();
@@ -119,7 +120,6 @@ namespace Azure
             public string Type { get; set; }
             public string Data { get; set; }
         }
-
     }
 
     public class AggregateNotFoundException : Exception

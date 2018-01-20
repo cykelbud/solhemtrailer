@@ -10,7 +10,7 @@ namespace Events
 
 
         public long BookingId { get; set; }
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
+        public long Start { get; set; }
+        public long End { get; set; }
     }
 }

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Collections;
 
-namespace Edument.CQRS
+namespace Core
 {
     /// <summary>
     /// Aggregate base class, which factors out some common infrastructure that
@@ -20,7 +17,7 @@ namespace Edument.CQRS
         /// <summary>
         /// The unique ID of the aggregate.
         /// </summary>
-        public Guid Id { get; internal set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Enuerates the supplied events and applies them in order to the aggregate.

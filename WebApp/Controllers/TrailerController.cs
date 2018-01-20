@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+using System.Threading.Tasks;
 using Azure;
 using Core;
 using Edument.CQRS;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Table;
 using Trailer;
 
 namespace solhemtrailer.Controllers
@@ -25,8 +30,8 @@ namespace solhemtrailer.Controllers
         }
 
 
-        [HttpGet("[action]")]
-        public IEnumerable<ScheduleSlot> Slots([FromBody]TimespanRequest request = null)
+        [HttpGet("slot")]
+        public async Task<IEnumerable<List<ScheduleSlot>>> Slots([FromBody]TimespanRequest request = null)
         {
             if (request == null)
             {
@@ -39,12 +44,15 @@ namespace solhemtrailer.Controllers
 
             var startDate = DateTime.Parse(request.StartDate);
             var endDate = DateTime.Parse(request.EndDate);
-            var slots = _scheduleQueries.GetBookingSchedule(_trailerId, startDate, endDate);
+            var slots = _scheduleQueries.GetBookingSchedule(_trailerId, startDate, endDate).ToList();
 
-            return slots;
+            var slotsBy = slots.GroupBy(s => s.Date).Select(k => k.ToList());
+
+
+            return slotsBy;
         }
 
-        [HttpPost("book")]
+        [HttpPost("booking")]
         public JsonResult Book([FromBody] BookSlotRequest request)
         {
             _dispatcher.SendCommand(new BookTrailerCommand()
@@ -59,13 +67,19 @@ namespace solhemtrailer.Controllers
             return Json(Ok());
         }
 
+        [HttpGet("booking")]
+        public IEnumerable<Booking> GettAllBookings()
+        {
+            return _scheduleQueries.GetAll();
+        }
+
     }
 
     public class BookSlotRequest
     {
         public long SlotId { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public long StartDate { get; set; }
+        public long EndDate { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
     }
