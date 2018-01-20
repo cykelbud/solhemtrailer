@@ -18,20 +18,23 @@
                 </td>
                 <td repeat.for="slot of day">
                     <button type="radio" class="btn btn-default" aria-label="Left Align" click.delegate="add(slot)">
-                        <span if.bind="slot.IsAvaliable" class="glyphicon glyphicon-time" aria-hidden="true"></span>
-                        <span if.bind="!slot.IsAvaliable" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                        
+                        <span if.two-way="slot.IsAvaliable" class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                        <span if.two-way="!slot.IsAvaliable" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                     </button>
                 </td>
             </tr>
         </tbody>
     </table>
 
-    <button click.delegate="getAll()">get all bookings</button>
+    <button click.delegate="getAllBookings()">get all bookings</button>
 
 
     <ul>
-        <li repeat.for="booking of all">${getJson(booking)}</li>
+        <li repeat.for="booking of bookings">Avboka&nbsp${booking.BookingId}
+            <button type="button" class="btn btn-default" aria-label="Left Align" click.delegate="cancel(booking)">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            </button>
+        </li>
     </ul>
 
 

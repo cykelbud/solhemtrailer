@@ -21,18 +21,17 @@ namespace ReadModels
             var scheduleSlots = new List<ScheduleSlot>();
             for (var day = startDate; day < endDate; day = day.AddDays(1))
             {
-                for (int slot = 1; slot <= slotsPerDay; slot++)
+                for (int slot = 0; slot < slotsPerDay; slot++)
                 {
                     var hrs = startHrs + slot * slotLength;
                     var startTime = day.AddHours(hrs);
                     var scheduleSlot = new ScheduleSlot()
                     {
-                        BookingId = day.Ticks, // startticks
                         TrailerId = trailerId,
                         StartTime = startTime.Ticks,
                         EndTime = startTime.AddHours(slotLength).Ticks,
                         IsAvaliable = true,
-                        Date = startDate.ToShortDateString()
+                        Date = day.ToShortDateString()
                     };
                     scheduleSlots.Add(scheduleSlot);
                 }

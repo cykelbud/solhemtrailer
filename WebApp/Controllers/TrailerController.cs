@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
-using Azure;
 using Core;
-using Edument.CQRS;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
-using Microsoft.WindowsAzure.Storage.Table;
+using ReadModels;
 using Trailer;
 
 namespace solhemtrailer.Controllers
@@ -31,14 +26,14 @@ namespace solhemtrailer.Controllers
 
 
         [HttpGet("slot")]
-        public async Task<IEnumerable<List<ScheduleSlot>>> Slots([FromBody]TimespanRequest request = null)
+        public async Task<IEnumerable<List<ScheduleSlot>>> Slots(TimespanRequest request = null)
         {
             if (request == null)
             {
                 request = new TimespanRequest()
                 {
                     StartDate = DateTime.Now.ToShortDateString(),
-                    EndDate = DateTime.Now.AddDays(1).ToShortDateString()
+                    EndDate = DateTime.Now.AddDays(7).ToShortDateString()
                 };
             }
 
@@ -58,11 +53,22 @@ namespace solhemtrailer.Controllers
             _dispatcher.SendCommand(new BookTrailerCommand()
             {
                 Id = _trailerId,
-                BookingId = request.SlotId,
+                BookingId = request.StartDate,
                 Start = request.StartDate,
                 End = request.EndDate,
                 Email = request.Email,
                 Phone = request.Phone,
+            });
+            return Json(Ok());
+        }
+
+        [HttpDelete("booking/{bookingId}")]
+        public JsonResult DeleteBooking(long bookingId)
+        {
+            _dispatcher.SendCommand(new CancelBookingCommand()
+            {
+                Id = _trailerId,
+                BookingId = bookingId,
             });
             return Json(Ok());
         }

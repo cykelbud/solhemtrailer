@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Core;
-using Edument.CQRS;
 using Events;
 
 namespace Trailer
