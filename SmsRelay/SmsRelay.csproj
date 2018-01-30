@@ -5,13 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Twilio" Version="5.9.4" />
+    <PackageReference Include="Twilio.AspNet.Core" Version="5.8.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Events\Events.csproj" />
-    <ProjectReference Include="..\SmsRelay\SmsRelay.csproj" />
   </ItemGroup>
 
 </Project>

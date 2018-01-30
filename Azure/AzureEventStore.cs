@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Core;
 using Events;
@@ -20,7 +21,7 @@ namespace Azure
             _table = azureTableFactory.GetTable(BookingsTableName);
         }
 
-        public void SaveEventsFor<TAggregate>(Guid aggregateId, int eventsLoaded, ArrayList newEvents)
+        public void SaveEventsFor<TAggregate>(Guid aggregateId, int eventsLoaded, IEnumerable<IEvent> newEvents)
         {
             var paritionKey = aggregateId.ToString("D");
             var partition = new Partition(_table, paritionKey);
@@ -44,7 +45,7 @@ namespace Azure
             }
         }
 
-        public IEnumerable LoadEventsFor<TAggregate>(Guid aggregateId)
+        public IEnumerable<IEvent> LoadEventsFor<TAggregate>(Guid aggregateId)
         {
             var paritionKey = aggregateId.ToString("D");
             var partition = new Partition(_table, paritionKey);
@@ -76,12 +77,20 @@ namespace Azure
             if (e.Type == "Events.TrailerBookedEvent")
             {
                 json = JsonConvert.DeserializeObject<TrailerBookedEvent>(e.Data);
-
             }
             if (e.Type == "Events.TrailerBookingCanceledEvent")
             {
                 json = JsonConvert.DeserializeObject<TrailerBookingCanceledEvent>(e.Data);
             }
+            if (e.Type == "Events.PhoneNumberAuthorizedEvent")
+            {
+                json = JsonConvert.DeserializeObject<PhoneNumberAuthorizedEvent>(e.Data);
+            }
+            if (e.Type == "Events.PhoneNumberRemovedEvent")
+            {
+                json = JsonConvert.DeserializeObject<PhoneNumberRemovedEvent>(e.Data);
+            }
+
             return (IEvent)json;
         }
 

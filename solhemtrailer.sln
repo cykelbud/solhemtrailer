@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trailer", "Trailer\Trailer.csproj", "{3D999DC8-B2D8-43D7-A3A5-03498D95CCD3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Azure", "Azure\Azure.csproj", "{7B7F9B1F-0F08-4174-9C26-17C0119200E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure", "Azure\Azure.csproj", "{7B7F9B1F-0F08-4174-9C26-17C0119200E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmsRelay", "SmsRelay\SmsRelay.csproj", "{5AD21C28-7357-45EC-8BAE-C659B969AE4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{7B7F9B1F-0F08-4174-9C26-17C0119200E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B7F9B1F-0F08-4174-9C26-17C0119200E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B7F9B1F-0F08-4174-9C26-17C0119200E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AD21C28-7357-45EC-8BAE-C659B969AE4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AD21C28-7357-45EC-8BAE-C659B969AE4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AD21C28-7357-45EC-8BAE-C659B969AE4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AD21C28-7357-45EC-8BAE-C659B969AE4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

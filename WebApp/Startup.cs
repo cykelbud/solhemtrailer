@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using ReadModels;
+using SmsRelay;
 using Trailer;
 
 namespace solhemtrailer
@@ -37,11 +38,14 @@ namespace solhemtrailer
             services.AddSingleton<IScheduleQueries, Scheduler>();
             services.AddTransient<IAzureTableFactory, AzureTableFactory>();
             services.AddSingleton<IMessageDispatcher, MessageDispatcher>();
+            services.AddSingleton<SmsNotifyer>();
+            services.AddSingleton<TrailerAggregate>();
 
             services.AddSingleton<IEventStore, InMemoryEventStore>();
+            services.AddSingleton<IRestClient, FakeRestClient>();
             //services.AddSingleton<IEventStore, AzureEventStore>();
-            services.AddSingleton<IRestClient, RestClient>();
-            services.AddSingleton<SmsNotifyer>();
+            //services.AddSingleton<IRestClient, RestClient>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,22 +66,22 @@ namespace solhemtrailer
             }
 
             // wireup
-            var commandHandler = new TrailerAggregate();
+            var trailerAggregate = app.ApplicationServices.GetService<TrailerAggregate>();
+            var relayNotifyer = app.ApplicationServices.GetService<SmsNotifyer>();
             var readmodel = app.ApplicationServices.GetService<IScheduleQueries>();
             var eventStore = app.ApplicationServices.GetService<IEventStore>();
-            var notifyer = app.ApplicationServices.GetService<SmsNotifyer>();
 
             // ladda readmodel för scheduler, en egen dispatcher 
             var dispatcher = new MessageDispatcher(eventStore);
             dispatcher.AddSubscriberFor<TrailerBookedEvent>((Scheduler)readmodel);
             dispatcher.AddSubscriberFor<TrailerBookingCanceledEvent>((Scheduler)readmodel);
-            var allevents = eventStore.LoadEventsFor<object>(Constants.TrailerId);
-            dispatcher.PublishEvents(allevents.Cast<IEvent>());
+            var trailerEvents = eventStore.LoadEventsFor<object>(Constants.TrailerId);
+            dispatcher.PublishEvents(trailerEvents);
 
             var messageDispatcher = app.ApplicationServices.GetService<IMessageDispatcher>();
-            messageDispatcher.ScanInstance(commandHandler);
+            messageDispatcher.ScanInstance(trailerAggregate);
+            messageDispatcher.ScanInstance(relayNotifyer);
             messageDispatcher.ScanInstance(readmodel);
-            messageDispatcher.ScanInstance(notifyer);
 
 
 

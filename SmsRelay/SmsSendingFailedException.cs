@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ReadModels
+namespace SmsRelay
 {
     public class SmsSendingFailedException : Exception
     {

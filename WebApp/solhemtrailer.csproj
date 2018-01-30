@@ -26,6 +26,7 @@
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Edument.CQRS\Edument.CQRS.csproj" />
     <ProjectReference Include="..\ReadModels\ReadModels.csproj" />
+    <ProjectReference Include="..\SmsRelay\SmsRelay.csproj" />
     <ProjectReference Include="..\Trailer\Trailer.csproj" />
   </ItemGroup>
 
