@@ -12,5 +12,7 @@ namespace Events
         public long BookingId { get; set; }
         public long Start { get; set; }
         public long End { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
     }
 }

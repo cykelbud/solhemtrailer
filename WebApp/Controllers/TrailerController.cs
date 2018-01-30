@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Core;
 using Microsoft.AspNetCore.Mvc;
-using ReadModels;
 using Trailer;
 
 namespace solhemtrailer.Controllers

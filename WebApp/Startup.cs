@@ -38,8 +38,10 @@ namespace solhemtrailer
             services.AddTransient<IAzureTableFactory, AzureTableFactory>();
             services.AddSingleton<IMessageDispatcher, MessageDispatcher>();
 
-            //services.AddSingleton<IEventStore, InMemoryEventStore>();
-            services.AddSingleton<IEventStore, AzureEventStore>();
+            services.AddSingleton<IEventStore, InMemoryEventStore>();
+            //services.AddSingleton<IEventStore, AzureEventStore>();
+            services.AddSingleton<IRestClient, RestClient>();
+            services.AddSingleton<SmsNotifyer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,6 +65,7 @@ namespace solhemtrailer
             var commandHandler = new TrailerAggregate();
             var readmodel = app.ApplicationServices.GetService<IScheduleQueries>();
             var eventStore = app.ApplicationServices.GetService<IEventStore>();
+            var notifyer = app.ApplicationServices.GetService<SmsNotifyer>();
 
             // ladda readmodel för scheduler, en egen dispatcher 
             var dispatcher = new MessageDispatcher(eventStore);
@@ -74,6 +77,7 @@ namespace solhemtrailer
             var messageDispatcher = app.ApplicationServices.GetService<IMessageDispatcher>();
             messageDispatcher.ScanInstance(commandHandler);
             messageDispatcher.ScanInstance(readmodel);
+            messageDispatcher.ScanInstance(notifyer);
 
 
 

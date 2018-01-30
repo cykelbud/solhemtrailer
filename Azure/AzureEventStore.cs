@@ -13,24 +13,11 @@ namespace Azure
     public class AzureEventStore : IEventStore
     {
         private readonly CloudTable _table;
+        const string BookingsTableName = "bookings";
 
         public AzureEventStore(IAzureTableFactory azureTableFactory)
         {
-            _table = azureTableFactory.GetTable();
-        }
-
-        private void checkStream(Partition p)
-        {
-            if (!Stream.ExistsAsync(p).GetAwaiter().GetResult())
-            {
-                var stream = Stream.ProvisionAsync(p).GetAwaiter().GetResult();
-                Console.WriteLine("Provisioned new empty stream in partition '{0}'", stream.Partition);
-                Console.WriteLine("Etag: {0}", stream.ETag);
-                Console.WriteLine("Version: {0}", stream.Version);
-            }
-
-           
-
+            _table = azureTableFactory.GetTable(BookingsTableName);
         }
 
         public void SaveEventsFor<TAggregate>(Guid aggregateId, int eventsLoaded, ArrayList newEvents)
@@ -84,9 +71,6 @@ namespace Azure
 
         static IEvent ToEvent(EventEntity e)
         {
-            var eeee = new TrailerBookedEvent();
-            var ee = new TrailerBookingCanceledEvent();
-
             object json = null;
 
             if (e.Type == "Events.TrailerBookedEvent")

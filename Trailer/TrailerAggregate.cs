@@ -14,7 +14,7 @@ namespace Trailer
         IApplyEvent<TrailerBookingCanceledEvent>
 
     {
-        readonly List<Booking> _bookings = new List<Booking>();
+        private readonly List<Booking> _bookings = new List<Booking>();
 
         public IEnumerable Handle(BookTrailerCommand command)
         {
@@ -33,7 +33,9 @@ namespace Trailer
                 Id = command.Id,
                 BookingId = command.BookingId,
                 Start = command.Start,
-                End = command.End
+                End = command.End,
+                Phone = command.Phone,
+                Email = command.Email,
             };
         }
 
@@ -44,15 +46,23 @@ namespace Trailer
                 throw new BookingDoesNotExist(command.BookingId);
             }
 
+            var phone = _bookings.Single(b => b.BookingId == command.BookingId).Phone;
             yield return new TrailerBookingCanceledEvent
             {
                 BookingId = command.BookingId,
+                Phone = phone,
             };
         }
 
         public void Apply(TrailerBookedEvent @event)
         {
-            _bookings.Add(new Booking() { BookingId = @event.BookingId, TrailerId = @event.Id, Start = @event.Start, End = @event.End });
+            _bookings.Add(new Booking() { BookingId = @event.BookingId,
+                TrailerId = @event.Id,
+                Start = @event.Start,
+                End = @event.End,
+                Email = @event.Email,
+                Phone = @event.Phone
+            });
         }
         public void Apply(TrailerBookingCanceledEvent @event)
         {
@@ -67,5 +77,7 @@ namespace Trailer
         public Guid TrailerId { get; set; }
         public long Start { get; set; }
         public long End { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
     }
 }

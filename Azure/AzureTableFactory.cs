@@ -7,7 +7,7 @@ namespace Azure
 {
     public class AzureTableFactory : IAzureTableFactory
     {
-        private async Task<CloudTable> GetTableAsync()
+        private async Task<CloudTable> GetTableAsync(string tableName)
         {
             //Account
             CloudStorageAccount storageAccount =
@@ -18,15 +18,15 @@ namespace Azure
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
 
             //Table
-            CloudTable table = tableClient.GetTableReference("bookings");
+            CloudTable table = tableClient.GetTableReference(tableName);
             await table.CreateIfNotExistsAsync();
             
             return table;
         }
 
-        public CloudTable GetTable()
+        public CloudTable GetTable(string tableName)
         {
-            return GetTableAsync().GetAwaiter().GetResult();
+            return GetTableAsync(tableName).GetAwaiter().GetResult();
         }
 
 

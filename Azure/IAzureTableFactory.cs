@@ -4,6 +4,6 @@ namespace Azure
 {
     public interface IAzureTableFactory
     {
-        CloudTable GetTable();
+        CloudTable GetTable(string tableName);
     }
 }
