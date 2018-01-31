@@ -12,62 +12,64 @@
                                 <div class="f1-progress-line" data-now-value="16.66" data-number-of-steps="3" style="width: 16.66%;"></div>
                             </div>
                             <div class="f1-step active">
-                                <div class="f1-step-icon"><i class="fa fa-user"></i></div>
-                                <p>about</p>
+                                <div class="f1-step-icon"><i class="fa fa-calendar-o"></i></div>
+                                <p>välj tid</p>
                             </div>
                             <div class="f1-step">
-                                <div class="f1-step-icon"><i class="fa fa-key"></i></div>
-                                <p>account</p>
+                                <div class="f1-step-icon"><i class="fa fa-calendar-check-o"></i></div>
+                                <p>boka</p>
                             </div>
                             <div class="f1-step">
-                                <div class="f1-step-icon"><i class="fa fa-twitter"></i></div>
-                                <p>social</p>
+                                <div class="f1-step-icon"><i class="fa fa-thumbs-up"></i></div>
+                                <p>klar!</p>
                             </div>
                         </div>
                         
                         <fieldset>
                             <h4>Visa tider för perioden:</h4>
-                            <div class="form-group" style="display: inline-block; *display: inline; zoom: 1; vertical-align: top;">
-                                <abp-datetime-picker placeholder="Från datum" element.bind="picker" style="width:50%;float: left;" name="f1-from-date" value.bind="fromDate" options.bind="{ format:'YYYY-MM-DD' }"></abp-datetime-picker>
-                                <abp-datetime-picker placeholder="Till datum" style="width:50%;float: right;" name="f1-to-date" value.bind="toDate" options.bind="{ format:'YYYY-MM-DD' }"></abp-datetime-picker>
-                                    <!-- <input type="text" name="f1-first-name" placeholder="First name..." class="f1-first-name form-control" id="f1-first-name"> -->
+                            <div class="form-group" >
+                                <label class="sr-only" for="f1-email">Från</label>
+                                <input style="width:300px; float:left;" type="text" name="f1-email" value.bind="scheduleDateDisplayText" disabled class="f1-email form-control" id="f1-email">
+                                <div class="f1-buttons">
+                                    <button type="button" class="btn btn-next">Visa nästa vecka</button>
+                                </div>
                             </div>
-                            <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Datum</th>
-                                            <th>06-09</th>
-                                            <th>09-12</th>
-                                            <th>12-15</th>
-                                            <th>15-18</th>
-                                            <th>18-06</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr repeat.for="day of slots">
-                                            <td>
-                                               ${day[0].Date}
-                                            </td>
-                                            <td repeat.for="slot of day">
-                                                <button type="radio" class="btn btn-default" aria-label="Left Align" click.delegate="add(slot)">
-                                                    <span if.two-way="slot.IsAvaliable" class="glyphicon glyphicon-time" aria-hidden="true"></span>
-                                                    <span if.two-way="!slot.IsAvaliable" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            
-                                <button click.delegate="getAllBookings()">get all bookings</button>
-                            
-                            
-                                <ul>
-                                    <li repeat.for="booking of bookings">Avboka&nbsp${booking.BookingId}
-                                        <button type="button" class="btn btn-default" aria-label="Left Align" click.delegate="cancel(booking)">
-                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                        </button>
-                                    </li>
-                                </ul>
+                            <table class="table table-bordered" style="max-width:100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Datum</th>
+                                        <th>06-09</th>
+                                        <th>09-12</th>
+                                        <th>12-15</th>
+                                        <th>15-18</th>
+                                        <th>18-06</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr repeat.for="day of slots">
+                                        <td>
+                                            ${day[0].Date}
+                                        </td>
+                                        <td repeat.for="slot of day">
+                                            <button type="button" style="min-width:0;" class="btn btn-next" aria-label="Left Align" click.delegate="select(slot)" disabled.bind="!slot.IsAvaliable">
+                                                <span if.two-way="slot.IsAvaliable" class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                                                <span if.two-way="!slot.IsAvaliable" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        
+                            <button click.delegate="getAllBookings()">get all bookings</button>
+                        
+                        
+                            <ul>
+                                <li repeat.for="booking of bookings">Avboka&nbsp${booking.BookingId}
+                                    <button type="button" class="btn btn-default" aria-label="Left Align" click.delegate="cancel(booking)">
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                    </button>
+                                </li>
+                            </ul>
                             <div class="f1-buttons">
                                 <button type="button" class="btn btn-next">Next</button>
                             </div>

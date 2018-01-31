@@ -1,6 +1,7 @@
 import { autoinject, bindable } from 'aurelia-framework';
 import { Config, Rest } from 'aurelia-api';
 import { HttpClient } from 'aurelia-fetch-client';
+import * as moment from 'moment';
 
 
 @autoinject
@@ -11,12 +12,17 @@ export class Trailer {
     api: Rest;
     slots: Array<ISlot[]>;
     bookings: IBooking[];
+    scheduleDateDisplayText : string = '2018-01-31 till 2018-02-05';
 
     constructor(config: Config) {
         this.api = config.getEndpoint('trailer');
     }
 
     async attached() {
+
+
+        moment
+        
         let search: IScheduleCriteria =
             {
                 StartDate: '2018-01-21',
@@ -26,7 +32,7 @@ export class Trailer {
         await this.getAllBookings();
     }
 
-    public async add(slot: ISlot) {
+    public async select(slot: ISlot) {
         let request: IBookRequest = {
             Email: "mail@mail.com",
             Phone: "1234567890",
@@ -69,6 +75,7 @@ interface ISlot {
     EndTime: number;
     IsAvailable: boolean;
     Date: string;
+    IsSelected : boolean;
 }
 
 interface IBooking {
