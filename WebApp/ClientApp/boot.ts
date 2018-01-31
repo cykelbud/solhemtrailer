@@ -20,6 +20,16 @@ export function configure(aurelia: Aurelia) {
             config.registerEndpoint('events', 'https://sagenda-sagenda-v1.p.mashape.com/Events/', {headers: {"X-Mashape-Key": 'QFbn17sJgwmshpiSjrunYHfAqUqyp1281gfjsnoMU5wXfWXCNV'}});
             config.registerEndpoint('trailer', 'api/trailer/');
         });
+        
+        aurelia.use.plugin(PLATFORM.moduleName('aurelia-bootstrap-datetimepicker'), (config : any) => {
+            // extra attributes, with config.extra
+            config.extra.iconBase = 'font-awesome';
+            config.extra.withDateIcon = true;
+         
+            // or even any picker options, with config.options
+            config.options.format = 'YYYY-MM-DD';
+            config.options.showTodayButton = true;
+          });
 
     if (IS_DEV_BUILD) {
         aurelia.use.developmentLogging();

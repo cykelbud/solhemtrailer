@@ -1,10 +1,13 @@
-import { autoinject } from 'aurelia-framework';
+import { autoinject, bindable } from 'aurelia-framework';
 import { Config, Rest } from 'aurelia-api';
 import { HttpClient } from 'aurelia-fetch-client';
 
+
 @autoinject
 export class Trailer {
-  
+
+    @bindable picker : any;
+
     api: Rest;
     slots: Array<ISlot[]>;
     bookings: IBooking[];
@@ -14,9 +17,11 @@ export class Trailer {
     }
 
     async attached() {
-        let search = new ScheduleCriteria();
-        search.StartDate = '2018-01-21';
-        search.EndDate = '2018-01-28';
+        let search: IScheduleCriteria =
+            {
+                StartDate: '2018-01-21',
+                EndDate: '2018-01-28'
+            };
         this.slots = await this.api.find('slot', search);
         await this.getAllBookings();
     }
@@ -27,7 +32,7 @@ export class Trailer {
             Phone: "1234567890",
             EndDate: slot.EndTime,
             StartDate: slot.StartTime
-        }
+        };
         await this.api.post('booking', request);
         slot.IsAvailable = false;
         await this.getAllBookings();
@@ -38,12 +43,12 @@ export class Trailer {
     }
 
 
-    public async cancel(booking : IBooking){
+    public async cancel(booking: IBooking) {
         await this.api.destroyOne('booking', booking.BookingId);
         await this.getAllBookings();
     }
 
-    public getJson(obj: any){
+    public getJson(obj: any) {
         return JSON.stringify(obj);
     }
 
@@ -73,7 +78,7 @@ interface IBooking {
     End: number;
 }
 
-class ScheduleCriteria{
-    StartDate : string;
-    EndDate : string;
+interface IScheduleCriteria {
+    StartDate: string;
+    EndDate: string;
 } 
