@@ -33,11 +33,11 @@ module.exports = ({ prod } = {}) => {
                 'aurelia-templating-router',
                 'aurelia-config',
                 'aurelia-api',
-                'aurelia-bootstrap-datetimepicker',
                 'fontawesome',
                 'bootstrap',
                 'bootstrap/dist/css/bootstrap.css',
-                'jquery'
+                'jquery',
+                'moment'
             ],
         },
         output: {

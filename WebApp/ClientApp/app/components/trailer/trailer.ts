@@ -7,8 +7,6 @@ import * as moment from 'moment';
 @autoinject
 export class Trailer {
 
-    @bindable picker : any;
-
     api: Rest;
     slots: Array<ISlot[]>;
     bookings: IBooking[];
@@ -22,7 +20,7 @@ export class Trailer {
 
 
         moment
-        
+
         let search: IScheduleCriteria =
             {
                 StartDate: '2018-01-21',
