@@ -2,6 +2,11 @@
   "name": "solhemtrailer",
   "version": "0.0.0",
   "dependencies": {
+    "@types/jquery": {
+      "version": "3.3.0",
+      "from": "@types/jquery@latest",
+      "resolved": "https://registry.npmjs.org/@types/jquery/-/jquery-3.3.0.tgz"
+    },
     "@types/webpack-env": {
       "version": "1.13.0",
       "from": "@types/webpack-env@>=1.13.0 <2.0.0",

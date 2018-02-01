@@ -1,124 +1,142 @@
 <template>
 
 
-        <div class="row">
-                <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 form-box">
-                    <form role="form" action="" method="post" class="f1">
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 form-box">
+            <form role="form" action="" method="post" class="f1">
 
-                        <h3>Register To Our App</h3>
-                        <p>Fill in the form to get instant access</p>
-                        <div class="f1-steps">
-                            <div class="f1-progress">
-                                <div class="f1-progress-line" data-now-value="16.66" data-number-of-steps="3" style="width: 16.66%;"></div>
-                            </div>
-                            <div class="f1-step active">
-                                <div class="f1-step-icon"><i class="fa fa-calendar-o"></i></div>
-                                <p>välj tid</p>
-                            </div>
-                            <div class="f1-step">
-                                <div class="f1-step-icon"><i class="fa fa-calendar-check-o"></i></div>
-                                <p>boka</p>
-                            </div>
-                            <div class="f1-step">
-                                <div class="f1-step-icon"><i class="fa fa-thumbs-up"></i></div>
-                                <p>klar!</p>
-                            </div>
-                        </div>
+                <h3>Register To Our App</h3>
+                <p>Fill in the form to get instant access</p>
+                <div class="f1-steps">
+                    <div class="f1-progress">
+                        <div class="f1-progress-line" data-now-value="16.66" data-number-of-steps="3" style="width: 16.66%;"></div>
+                    </div>
+                    <div class="f1-step active">
+                        <div class="f1-step-icon"><i class="fa fa-calendar-o"></i></div>
+                        <p>välj tid</p>
+                    </div>
+                    <div class="f1-step">
+                        <div class="f1-step-icon"><i class="fa fa-calendar-check-o"></i></div>
+                        <p>boka</p>
+                    </div>
+                    <div class="f1-step">
+                        <div class="f1-step-icon"><i class="fa fa-thumbs-up"></i></div>
+                        <p>klar!</p>
+                    </div>
+                </div>
+
+                <fieldset>
                         
-                        <fieldset>
-                            <h4>Visa tider för perioden:</h4>
-                            <div class="form-group" >
-                                <label class="sr-only" for="f1-email">Från</label>
-                                <input style="width:300px; float:left;" type="text" name="f1-email" value.bind="scheduleDateDisplayText" disabled class="f1-email form-control" id="f1-email">
-                                <div class="f1-buttons">
-                                    <button type="button" class="btn btn-next">Visa nästa vecka</button>
-                                </div>
-                            </div>
-                            <table class="table table-bordered" style="max-width:100%;">
-                                <thead>
-                                    <tr>
-                                        <th>Datum</th>
-                                        <th>06-09</th>
-                                        <th>09-12</th>
-                                        <th>12-15</th>
-                                        <th>15-18</th>
-                                        <th>18-06</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr repeat.for="day of slots">
-                                        <td>
-                                            ${day[0].Date}
-                                        </td>
-                                        <td repeat.for="slot of day">
-                                            <button type="button" style="min-width:0;" class="btn btn-next" aria-label="Left Align" click.delegate="select(slot)" disabled.bind="!slot.IsAvaliable">
+                    <h4>Tider för perioden: </h4>
+                        
+                    <div class="input-group">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-previous">Previous</button>
+                        </span>
+                        <input type="text" value.two-way="scheduleDateDisplayText" disabled class="f1-date form-control">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-next">Nästa</button>
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" value.two-way="scheduleDateDisplayText" disabled class="f1-date form-control">
+                        <button type="button" style="display:inline-block;" class="btn btn-next">Nästa</button>
+                    </div>
+                    <h4>Vald tid:</h4>
+                    <div class="form-group">
+                        <label class="sr-only" for="f1-date">Från</label>
+                        <input style="width:300px; float:left;" type="text" name="f1-date" value.two-way="scheduleDateDisplayText" disabled class="f1-date form-control"
+                            id="f1-date">
+                        <div class="f1-buttons">
+                            <button type="button" class="btn btn-next">Visa nästa vecka</button>
+                        </div>
+                    </div>
+
+                    <table class="table table-bordered" style="max-width:100%;">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>06-09</th>
+                                <th>09-12</th>
+                                <th>12-15</th>
+                                <th>15-18</th>
+                                <th>18-06</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr repeat.for="day of slots">
+                                <td>
+                                    ${day[0].Date}
+                                </td>
+                                <td repeat.for="slot of day">
+                                    <button type="button" style="min-width:0;" class="btn btn-next" aria-label="Left Align" click.delegate="select(slot)" disabled.bind="!slot.IsAvaliable">
                                                 <span if.two-way="slot.IsAvaliable" class="glyphicon glyphicon-time" aria-hidden="true"></span>
                                                 <span if.two-way="!slot.IsAvaliable" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                             </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        
-                            <button click.delegate="getAllBookings()">get all bookings</button>
-                        
-                        
-                            <ul>
-                                <li repeat.for="booking of bookings">Avboka&nbsp${booking.BookingId}
-                                    <button type="button" class="btn btn-default" aria-label="Left Align" click.delegate="cancel(booking)">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <button click.delegate="getAllBookings()">get all bookings</button>
+
+
+                    <ul>
+                        <li repeat.for="booking of bookings">Avboka&nbsp${booking.BookingId}
+                            <button type="button" class="btn btn-default" aria-label="Left Align" click.delegate="cancel(booking)">
                                         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                     </button>
-                                </li>
-                            </ul>
-                            <div class="f1-buttons">
-                                <button type="button" class="btn btn-next">Next</button>
-                            </div>
-                        </fieldset>
+                        </li>
+                    </ul>
+                    <div class="f1-buttons">
+                        <button type="button" class="btn btn-next">Next</button>
+                    </div>
+                </fieldset>
 
-                        <fieldset>
-                            <h4>Set up your account:</h4>
-                            <div class="form-group">
-                                <label class="sr-only" for="f1-email">Email</label>
-                                <input type="text" name="f1-email" placeholder="Email..." class="f1-email form-control" id="f1-email">
-                            </div>
-                            <div class="form-group">
-                                <label class="sr-only" for="f1-password">Password</label>
-                                <input type="password" name="f1-password" placeholder="Password..." class="f1-password form-control" id="f1-password">
-                            </div>
-                            <div class="form-group">
-                                <label class="sr-only" for="f1-repeat-password">Repeat password</label>
-                                <input type="password" name="f1-repeat-password" placeholder="Repeat password..." 
-                                                    class="f1-repeat-password form-control" id="f1-repeat-password">
-                            </div>
-                            <div class="f1-buttons">
-                                <button type="button" class="btn btn-previous">Previous</button>
-                                <button type="button" class="btn btn-next">Next</button>
-                            </div>
-                        </fieldset>
+                <fieldset>
+                    <h4>Set up your account:</h4>
+                    <div class="form-group">
+                        <label class="sr-only" for="f1-email">Email</label>
+                        <input type="text" name="f1-email" placeholder="Email..." class="f1-email form-control" id="f1-email">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="f1-password">Password</label>
+                        <input type="password" name="f1-password" placeholder="Password..." class="f1-password form-control" id="f1-password">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="f1-repeat-password">Repeat password</label>
+                        <input type="password" name="f1-repeat-password" placeholder="Repeat password..." class="f1-repeat-password form-control"
+                            id="f1-repeat-password">
+                    </div>
+                    <div class="f1-buttons">
+                        <button type="button" class="btn btn-previous">Previous</button>
+                        <button type="button" class="btn btn-next">Next</button>
+                    </div>
+                </fieldset>
 
-                        <fieldset>
-                            <h4>Social media profiles:</h4>
-                            <div class="form-group">
-                                <label class="sr-only" for="f1-facebook">Facebook</label>
-                                <input type="text" name="f1-facebook" placeholder="Facebook..." class="f1-facebook form-control" id="f1-facebook">
-                            </div>
-                            <div class="form-group">
-                                <label class="sr-only" for="f1-twitter">Twitter</label>
-                                <input type="text" name="f1-twitter" placeholder="Twitter..." class="f1-twitter form-control" id="f1-twitter">
-                            </div>
-                            <div class="form-group">
-                                <label class="sr-only" for="f1-google-plus">Google plus</label>
-                                <input type="text" name="f1-google-plus" placeholder="Google plus..." class="f1-google-plus form-control" id="f1-google-plus">
-                            </div>
-                            <div class="f1-buttons">
-                                <button type="button" class="btn btn-previous">Previous</button>
-                                <button type="submit" class="btn btn-submit">Submit</button>
-                            </div>
-                        </fieldset>
-                    
-                    </form>
-                </div>
-            </div>
+                <fieldset>
+                    <h4>Social media profiles:</h4>
+                    <div class="form-group">
+                        <label class="sr-only" for="f1-facebook">Facebook</label>
+                        <input type="text" name="f1-facebook" placeholder="Facebook..." class="f1-facebook form-control" id="f1-facebook">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="f1-twitter">Twitter</label>
+                        <input type="text" name="f1-twitter" placeholder="Twitter..." class="f1-twitter form-control" id="f1-twitter">
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="f1-google-plus">Google plus</label>
+                        <input type="text" name="f1-google-plus" placeholder="Google plus..." class="f1-google-plus form-control" id="f1-google-plus">
+                    </div>
+                    <div class="f1-buttons">
+                        <button type="button" class="btn btn-previous">Previous</button>
+                        <button type="submit" class="btn btn-submit">Submit</button>
+                    </div>
+                </fieldset>
+
+            </form>
+        </div>
+    </div>
 
 
 
