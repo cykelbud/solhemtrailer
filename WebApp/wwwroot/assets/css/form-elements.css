@@ -1,5 +1,6 @@
 
 input[type="text"], 
+input[type="tel"], 
 input[type="password"], 
 textarea, 
 textarea.form-control {
@@ -28,6 +29,7 @@ textarea.form-control {
 }
 
 input[type="text"]:focus, 
+input[type="tel"]:focus, 
 input[type="password"]:focus, 
 textarea:focus, 
 textarea.form-control:focus {
@@ -37,13 +39,19 @@ textarea.form-control:focus {
     -moz-box-shadow: none; -webkit-box-shadow: none; box-shadow: none;
 }
 
-input[type="text"]:-moz-placeholder, input[type="password"]:-moz-placeholder, 
+input[type="text"]:-moz-placeholder, 
+input[type="tel"]:-moz-placeholder, 
+input[type="password"]:-moz-placeholder, 
 textarea:-moz-placeholder, textarea.form-control:-moz-placeholder { color: #888; }
 
-input[type="text"]:-ms-input-placeholder, input[type="password"]:-ms-input-placeholder, 
+input[type="text"]:-ms-input-placeholder, 
+input[type="tel"]:-ms-input-placeholder, 
+input[type="password"]:-ms-input-placeholder, 
 textarea:-ms-input-placeholder, textarea.form-control:-ms-input-placeholder { color: #888; }
 
-input[type="text"]::-webkit-input-placeholder, input[type="password"]::-webkit-input-placeholder, 
+input[type="text"]::-webkit-input-placeholder, 
+input[type="tel"]::-webkit-input-placeholder, 
+input[type="password"]::-webkit-input-placeholder, 
 textarea::-webkit-input-placeholder, textarea.form-control::-webkit-input-placeholder { color: #888; }
 
 label { font-weight: 300; }

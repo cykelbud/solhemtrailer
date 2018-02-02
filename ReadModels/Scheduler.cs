@@ -25,12 +25,15 @@ namespace ReadModels
                 {
                     var hrs = startHrs + slot * slotLength;
                     var startTime = day.AddHours(hrs);
+                    var endTime = startTime.AddHours(slotLength);
                     var scheduleSlot = new ScheduleSlot()
                     {
                         TrailerId = trailerId,
                         StartTime = startTime.Ticks,
-                        EndTime = startTime.AddHours(slotLength).Ticks,
-                        IsAvaliable = true,
+                        StartUtc = startTime.ToString("s"),
+                        EndTime = endTime.Ticks,
+                        EndUtc = endTime.ToString("s"),
+                        IsAvaliable = endTime >= DateTime.Now,
                         Date = day.ToShortDateString()
                     };
                     scheduleSlots.Add(scheduleSlot);
