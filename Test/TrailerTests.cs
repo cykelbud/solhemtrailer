@@ -26,15 +26,15 @@ namespace Test
                 {
                     BookingId = 1,
                     Id = testId,
-                    Start = dateTime,
-                    End = dateTime.AddDays(1),
+                    Start = dateTime.Ticks,
+                    End = dateTime.AddDays(1).Ticks,
                 }),
                 Then(new TrailerBookedEvent()
                 {
                     BookingId = 1,
                     Id = testId,
-                    Start = dateTime,
-                    End = dateTime.AddDays(1),
+                    Start = dateTime.Ticks,
+                    End = dateTime.AddDays(1).Ticks,
                 })
                 );
         }
@@ -48,8 +48,8 @@ namespace Test
                 {
                     BookingId = 1,
                     Id = testId,
-                    Start = dateTime,
-                    End = dateTime.AddDays(1),
+                    Start = dateTime.Ticks,
+                    End = dateTime.AddDays(1).Ticks,
                 }),
                 When(new CancelBookingCommand()
                 {
@@ -71,15 +71,15 @@ namespace Test
                 {
                     BookingId = 1,
                     Id = testId,
-                    Start = dateTime,
-                    End = dateTime.AddDays(1),
+                    Start = dateTime.Ticks,
+                    End = dateTime.AddDays(1).Ticks,
                 }),
                 When(new BookTrailerCommand()
                 {
                     BookingId = 1,
                     Id = testId,
-                    Start = dateTime,
-                    End = dateTime.AddDays(1),
+                    Start = dateTime.Ticks,
+                    End = dateTime.AddDays(1).Ticks,
                 }),
                 ThenFailWith<BookingAlreadyExistsException>()
             );
@@ -95,22 +95,22 @@ namespace Test
                 {
                     BookingId = 1,
                     Id = testId,
-                    Start = dateTime,
-                    End = dateTime.AddHours(3),
+                    Start = dateTime.Ticks,
+                    End = dateTime.AddHours(3).Ticks,
                 }),
                 When(new BookTrailerCommand()
                 {
                     BookingId = 1,
                     Id = testId,
-                    Start = dateTime.AddHours(-3),
-                    End = dateTime,
+                    Start = dateTime.AddHours(-3).Ticks,
+                    End = dateTime.Ticks,
                 }),
                 Then(new TrailerBookedEvent()
                 {
                     BookingId = 1,
                     Id = testId,
-                    Start = dateTime.AddHours(-3),
-                    End = dateTime,
+                    Start = dateTime.AddHours(-3).Ticks,
+                    End = dateTime.Ticks,
                 })
             );
         }
@@ -123,22 +123,22 @@ namespace Test
                 {
                     BookingId = 1,
                     Id = testId,
-                    Start = dateTime,
-                    End = dateTime.AddHours(3),
+                    Start = dateTime.Ticks,
+                    End = dateTime.AddHours(3).Ticks,
                 }),
                 When(new BookTrailerCommand()
                 {
                     BookingId = 1,
                     Id = testId,
-                    Start = dateTime.AddHours(3),
-                    End = dateTime.AddHours(6),
+                    Start = dateTime.AddHours(3).Ticks,
+                    End = dateTime.AddHours(6).Ticks,
                 }),
                 Then(new TrailerBookedEvent()
                     {
                         BookingId = 1,
                         Id = testId,
-                        Start = dateTime.AddHours(3),
-                        End = dateTime.AddHours(6),
+                        Start = dateTime.AddHours(3).Ticks,
+                        End = dateTime.AddHours(6).Ticks,
                     })
             );
         }
@@ -152,15 +152,15 @@ namespace Test
                 {
                     BookingId = 1,
                     Id = testId,
-                    Start = dateTime,
-                    End = dateTime.AddHours(3),
+                    Start = dateTime.Ticks,
+                    End = dateTime.AddHours(3).Ticks,
                 }),
                 When(new BookTrailerCommand()
                 {
                     BookingId = 1,
                     Id = testId,
-                    Start = dateTime.AddHours(-1),
-                    End = dateTime.AddHours(4),
+                    Start = dateTime.AddHours(-1).Ticks,
+                    End = dateTime.AddHours(4).Ticks,
                 }),
                 ThenFailWith<BookingAlreadyExistsException>()
             );
@@ -176,15 +176,15 @@ namespace Test
                 {
                     BookingId = 1,
                     Id = testId,
-                    Start = dateTime,
-                    End = dateTime.AddHours(3),
+                    Start = dateTime.Ticks,
+                    End = dateTime.AddHours(3).Ticks,
                 }),
                 When(new BookTrailerCommand()
                 {
                     BookingId = 1,
                     Id = testId,
-                    Start = dateTime.AddHours(2),
-                    End = dateTime.AddHours(5),
+                    Start = dateTime.AddHours(2).Ticks,
+                    End = dateTime.AddHours(5).Ticks,
                 }),
                 ThenFailWith<BookingAlreadyExistsException>()
             );

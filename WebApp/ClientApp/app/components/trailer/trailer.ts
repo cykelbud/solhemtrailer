@@ -6,9 +6,9 @@ import * as $ from "jquery";
 
 
 export enum Step {
-    Select = 0,
-    Book = 1,
-    Done = 2
+    Select = 1,
+    Book = 2,
+    Done = 3
 }
 
 @autoinject
@@ -18,15 +18,19 @@ export class Trailer {
     slots: Array<ISlot[]>;
     bookings: IBooking[];
     @bindable scheduleDateDisplayText: string;
-    currentStep : Step;
+    @bindable currentStep : Step;
     selectedSlot : ISlot;
-
+    selectedStart : string;
+    
     constructor(config: Config) {
         this.api = config.getEndpoint('trailer');
         this.currentStep = Step.Select;
     }
 
     async attached() {
+
+        //$('.f1 fieldset:first').fadeIn('slow');
+        
 
         let day = moment().isoWeekday() - 1;
         let dateFirstDayOfWeek = moment().add(-day, 'days').format('YYYY-MM-DD');
@@ -43,7 +47,6 @@ export class Trailer {
         await this.getAllBookings();
 
 
-        $('.f1 fieldset:first').fadeIn('slow');
 
         // next step
         // $('.f1 .btn-next').on('click', function () {
@@ -99,41 +102,18 @@ export class Trailer {
         // });
 
 
-        function scroll_to_class(element_class: JQuery<HTMLElement>, removed_height: any) {
-            let offset = element_class.offset();
-
-            if (!offset) {
-                return;
-            }
-
-            var scroll_to = offset.top - removed_height;
-            if ($(window).scrollTop() != scroll_to) {
-                $('html, body').stop().animate({ scrollTop: scroll_to }, 0);
-            }
-        }
-
-        function bar_progress(progress_line_object: any, direction: any) {
-            var number_of_steps = progress_line_object.data('number-of-steps');
-            var now_value = progress_line_object.data('now-value');
-            var new_value = 0;
-            if (direction == 'right') {
-                new_value = now_value + (100 / number_of_steps);
-            }
-            else if (direction == 'left') {
-                new_value = now_value - (100 / number_of_steps);
-            }
-            progress_line_object.attr('style', 'width: ' + new_value + '%;').data('now-value', new_value);
-        }
+        
     }
 
-    public select(slot: ISlot) {
+    public async select(slot: ISlot) {
         if(this.selectedSlot){
             this.selectedSlot.IsSelected = false;
         }
 
         slot.IsSelected = true;
         this.selectedSlot = slot;
-    }
+        this.selectedStart = moment(this.selectedSlot.StartTime / 10000).format('YYYY-MM-DD hh:mm');
+   }
 
     public async book(){
         let slot = this.selectedSlot;
@@ -195,7 +175,31 @@ export class Trailer {
 
 
 
+    // scroll_to_class(element_class: JQuery<HTMLElement>, removed_height: any) {
+    //     let offset = element_class.offset();
 
+    //     if (!offset) {
+    //         return;
+    //     }
+
+    //     var scroll_to = offset.top - removed_height;
+    //     if ($(window).scrollTop() != scroll_to) {
+    //         $('html, body').stop().animate({ scrollTop: scroll_to }, 0);
+    //     }
+    // };
+
+    // bar_progress(progress_line_object: any, direction: any) {
+    //     var number_of_steps = progress_line_object.data('number-of-steps');
+    //     var now_value = progress_line_object.data('now-value');
+    //     var new_value = 0;
+    //     if (direction == 'right') {
+    //         new_value = now_value + (100 / number_of_steps);
+    //     }
+    //     else if (direction == 'left') {
+    //         new_value = now_value - (100 / number_of_steps);
+    //     }
+    //     progress_line_object.attr('style', 'width: ' + new_value + '%;').data('now-value', new_value);
+    // }
 
 }
 

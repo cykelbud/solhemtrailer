@@ -1,12 +1,12 @@
 <template>
 
-
     <div class="row">
         <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 form-box">
-            <form role="form" action="" method="post" class="f1">
+            <form class="f1">
 
-                <h3>Register To Our App</h3>
-                <p>Fill in the form to get instant access</p>
+                <h3>Boka släpet i solhem</h3>
+                <p>Välj tid, ange kontaktuppgifter och boka!</p>
+                
                 <div class="f1-steps">
                     <div class="f1-progress">
                         <div class="f1-progress-line" data-now-value="16.66" data-number-of-steps="3" style="width: 16.66%;"></div>
@@ -25,31 +25,27 @@
                     </div>
                 </div>
 
-                <fieldset>
+                <fieldset if.bind="currentStep==1">
                         
                     <h4>Tider för perioden: </h4>
                         
                     <div class="input-group">
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-previous">Previous</button>
+                            <button type="button" style="height:44px;" class="btn btn-previous" click.delegate="previous()">Föregående vecka</button>
                         </span>
-                        <input type="text" value.two-way="scheduleDateDisplayText" disabled class="f1-date form-control">
+                        <input type="text" value.bind="scheduleDateDisplayText" disabled class="f1-date form-control">
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-next">Nästa</button>
+                            <button type="button" style="height:44px;" class="btn btn-next" click.delegate="next()">Nästa vecka</button>
                         </span>
                     </div>
-                    <div class="form-group">
-                        <input type="text" value.two-way="scheduleDateDisplayText" disabled class="f1-date form-control">
-                        <button type="button" style="display:inline-block;" class="btn btn-next">Nästa</button>
-                    </div>
+
                     <h4>Vald tid:</h4>
-                    <div class="form-group">
-                        <label class="sr-only" for="f1-date">Från</label>
-                        <input style="width:300px; float:left;" type="text" name="f1-date" value.two-way="scheduleDateDisplayText" disabled class="f1-date form-control"
-                            id="f1-date">
-                        <div class="f1-buttons">
-                            <button type="button" class="btn btn-next">Visa nästa vecka</button>
-                        </div>
+
+                    <div class="input-group" style="padding-bottom: 20px;">
+                        <input type="text" value.bind="selectedStart" disabled class="f1-date form-control">
+                        <span class="input-group-btn">
+                            <button type="button" style="height:44px;" class="btn btn-next" click.delegate="book()">Boka tiden</button>
+                        </span>
                     </div>
 
                     <table class="table table-bordered" style="max-width:100%;">
@@ -70,9 +66,9 @@
                                 </td>
                                 <td repeat.for="slot of day">
                                     <button type="button" style="min-width:0;" class="btn btn-next" aria-label="Left Align" click.delegate="select(slot)" disabled.bind="!slot.IsAvaliable">
-                                                <span if.two-way="slot.IsAvaliable" class="glyphicon glyphicon-time" aria-hidden="true"></span>
-                                                <span if.two-way="!slot.IsAvaliable" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                            </button>
+                                        <span if.two-way="slot.IsAvaliable" class="fa fa-calendar" aria-hidden="true"></span>
+                                        <span if.two-way="!slot.IsAvaliable" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>
@@ -93,7 +89,7 @@
                     </div>
                 </fieldset>
 
-                <fieldset>
+                <fieldset if.bind="currentStep==2">
                     <h4>Set up your account:</h4>
                     <div class="form-group">
                         <label class="sr-only" for="f1-email">Email</label>
@@ -114,7 +110,7 @@
                     </div>
                 </fieldset>
 
-                <fieldset>
+                <fieldset if.bind="currentStep==3">
                     <h4>Social media profiles:</h4>
                     <div class="form-group">
                         <label class="sr-only" for="f1-facebook">Facebook</label>
