@@ -25,17 +25,17 @@
                     </div>
                 </div>
 
-                <fieldset if.bind="currentStep==1">
+                <fieldset style.bind="currentStep==1? 'display:block': ''">
                         
                     <h4>Tider för perioden: </h4>
                         
                     <div class="input-group">
                         <span class="input-group-btn">
-                            <button type="button" style="height:44px;" class="btn btn-previous" click.delegate="previous()">Föregående vecka</button>
+                            <button type="button" style="height:44px;" class="btn btn-previous" click.delegate="getPreviousWeekSchedule()">Föregående vecka</button>
                         </span>
                         <input type="text" value.bind="scheduleDateDisplayText" disabled class="f1-date form-control">
                         <span class="input-group-btn">
-                            <button type="button" style="height:44px;" class="btn btn-next" click.delegate="next()">Nästa vecka</button>
+                            <button type="button" style="height:44px;" class="btn btn-next" click.delegate="getNextWeekSchedule()">Nästa vecka</button>
                         </span>
                     </div>
 
@@ -44,7 +44,7 @@
                     <div class="input-group" style="padding-bottom: 20px;">
                         <input type="text" value.bind="selectedStart" disabled class="f1-date form-control">
                         <span class="input-group-btn">
-                            <button type="button" style="height:44px;" class="btn btn-next" click.delegate="book()">Boka tiden</button>
+                            <button type="button" style="height:44px;" class="btn btn-next" click.delegate="next()">Boka tiden</button>
                         </span>
                     </div>
 
@@ -89,28 +89,21 @@
                     </div>
                 </fieldset>
 
-                <fieldset if.bind="currentStep==2">
+                <fieldset style.bind="currentStep==2? 'display:block': ''">
                     <h4>Set up your account:</h4>
                     <div class="form-group">
-                        <label class="sr-only" for="f1-email">Email</label>
-                        <input type="text" name="f1-email" placeholder="Email..." class="f1-email form-control" id="f1-email">
+                        <input type="text" value.bind="bookRequest.Email" name="f1-email" placeholder="Email..." class="f1-email form-control" >
                     </div>
                     <div class="form-group">
-                        <label class="sr-only" for="f1-password">Password</label>
-                        <input type="password" name="f1-password" placeholder="Password..." class="f1-password form-control" id="f1-password">
-                    </div>
-                    <div class="form-group">
-                        <label class="sr-only" for="f1-repeat-password">Repeat password</label>
-                        <input type="password" name="f1-repeat-password" placeholder="Repeat password..." class="f1-repeat-password form-control"
-                            id="f1-repeat-password">
+                        <input type="password" value.bind="bookRequest.Phone" name="f1-password" placeholder="Mobiltelefon *" class="f1-password form-control">
                     </div>
                     <div class="f1-buttons">
-                        <button type="button" class="btn btn-previous">Previous</button>
-                        <button type="button" class="btn btn-next">Next</button>
+                        <button type="button" style="height:44px;" class="btn btn-previous" click.delegate="previous()">Previous</button>
+                        <button type="button" style="height:44px;" class="btn btn-next" click.delegate="book()">Boka tiden!</button>
                     </div>
                 </fieldset>
 
-                <fieldset if.bind="currentStep==3">
+                <fieldset style.bind="currentStep==3? 'display:block': ''">
                     <h4>Social media profiles:</h4>
                     <div class="form-group">
                         <label class="sr-only" for="f1-facebook">Facebook</label>

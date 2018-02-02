@@ -18,13 +18,21 @@ export class Trailer {
     slots: Array<ISlot[]>;
     bookings: IBooking[];
     @bindable scheduleDateDisplayText: string;
-    @bindable currentStep : Step;
+    @bindable currentStep : number;
     selectedSlot : ISlot;
     selectedStart : string;
+    currentWeekStart : string;
+    bookRequest: IBookRequest;
     
     constructor(config: Config) {
         this.api = config.getEndpoint('trailer');
         this.currentStep = Step.Select;
+        this.bookRequest = {
+            Email: '',
+            Phone: '',
+            EndDate: 0,
+            StartDate: 0
+        };
     }
 
     async attached() {
@@ -32,18 +40,8 @@ export class Trailer {
         //$('.f1 fieldset:first').fadeIn('slow');
         
 
-        let day = moment().isoWeekday() - 1;
-        let dateFirstDayOfWeek = moment().add(-day, 'days').format('YYYY-MM-DD');
-        let dateLastDayOfWeek = moment().add(7 - day, 'days').format('YYYY-MM-DD');
-
-        this.scheduleDateDisplayText = dateFirstDayOfWeek + ' till ' + dateLastDayOfWeek;
-
-        let search: IScheduleCriteria =
-            {
-                StartDate: dateFirstDayOfWeek,
-                EndDate: dateLastDayOfWeek
-            };
-        this.slots = await this.api.find('slot', search);
+        this.currentWeekStart = this.getThisWeekStart();
+        await this.getWeekSchedule(this.currentWeekStart);
         await this.getAllBookings();
 
 
@@ -131,31 +129,69 @@ export class Trailer {
     }
 
     public next(): void {
-        let step = this.currentStep;
-        switch(step){
-            case Step.Select:
-                this.currentStep = Step.Book;
-            case Step.Book:
-                this.currentStep = Step.Done;
-            case Step.Done:
-                this.currentStep = Step.Select;
-            default:
-                this.currentStep = Step.Select;
+
+        if(!this.selectedSlot){
+            return;
         }
+
+        let step = this.currentStep;
+        if (step == 3){
+            this.currentStep = 1;
+            return;
+        }
+        this.currentStep = step + 1;
     }
 
     public previous(): void{
         let step = this.currentStep;
-        switch(step){
-            case Step.Select:
-                this.currentStep = Step.Done;
-            case Step.Book:
-                this.currentStep = Step.Select;
-            case Step.Done:
-                this.currentStep = Step.Book;
-            default:
-                this.currentStep = Step.Select;
+        if (step == 1){
+            this.currentStep = 3;
+            return;
         }
+        this.currentStep = step - 1;
+    }
+
+
+    getThisWeekStart(): string {
+        let day = moment().isoWeekday() - 1;
+        let dateFirstDayOfWeek = moment().add(-day, 'days').format('YYYY-MM-DD');
+        return dateFirstDayOfWeek;
+    }
+
+    getNextWeekStart(weekStart : string) {
+        let nextWeekStart = moment(weekStart).add(8, 'days').format('YYYY-MM-DD');
+        return nextWeekStart;
+    }
+
+    getPreviousWeekStart(weekStart : string) {
+        let nextWeekStart = moment(weekStart).add(-8, 'days').format('YYYY-MM-DD');
+        return nextWeekStart;
+    }
+
+    async getWeekSchedule(weekStart : string) {
+        let dateFirstDayOfWeek = weekStart;
+        let dateLastDayOfWeek = moment(weekStart).add(7, 'days').format('YYYY-MM-DD');
+
+        this.scheduleDateDisplayText = dateFirstDayOfWeek + ' till ' + dateLastDayOfWeek;
+
+        let search: IScheduleCriteria =
+            {
+                StartDate: dateFirstDayOfWeek,
+                EndDate: dateLastDayOfWeek
+            };
+        this.slots = await this.api.find('slot', search);
+    }
+
+    public async getNextWeekSchedule(){
+        let nextWeekStart = this.getNextWeekStart(this.currentWeekStart);
+        await this.getWeekSchedule(nextWeekStart);
+        this.currentWeekStart = nextWeekStart;
+    }
+
+    public async getPreviousWeekSchedule(){
+        let prevWeekStart = this.getPreviousWeekStart(this.currentWeekStart);
+        await this.getWeekSchedule(prevWeekStart);
+        this.currentWeekStart = prevWeekStart;
     }
 
 
