@@ -118,6 +118,8 @@ export class Trailer {
         try {
             this.isBooking = true;
             let slot = this.selectedSlot;
+            this.bookRequest.StartDate = slot.StartTime;
+            this.bookRequest.EndDate = slot.EndTime;
             await this.api.post('booking', this.bookRequest);
             slot.IsAvailable = false;
 
@@ -126,7 +128,6 @@ export class Trailer {
         }
         finally {
             this.isBooking = false;
-            this.selectedSlot = new Slot;
         }
     }
 

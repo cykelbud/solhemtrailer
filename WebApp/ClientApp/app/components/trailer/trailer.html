@@ -85,8 +85,8 @@
                                     ${displayDate(day[0].Date)}
                                 </td>
                                 <td repeat.for="slot of day">
-                                    <button type="button" style="min-width:0;" class="btn btn-next" aria-label="Left Align" click.delegate="select(slot)" disabled.bind="!slot.IsAvaliable">
-                                        <i class.bind="slot.IsAvaliable? 'fa fa-calendar-o':'fa fa-calendar-times-o'" ></i>
+                                    <button type="button" style="min-width:0;" class="btn btn-next" click.trigger="select(slot)" disabled.bind="!slot.IsAvailable">
+                                        <i class.bind="slot.IsAvailable? 'fa fa-calendar-o':'fa fa-calendar-times-o'" ></i>
                                     </button>
                                 </td>
                             </tr>

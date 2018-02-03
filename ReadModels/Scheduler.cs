@@ -26,6 +26,11 @@ namespace ReadModels
                     var hrs = startHrs + slot * slotLength;
                     var startTime = day.AddHours(hrs);
                     var endTime = startTime.AddHours(slotLength);
+                    if (slot == slotsPerDay - 1)
+                    {
+                        endTime = day.AddDays(1).AddHours(startHrs);
+                    }
+
                     var scheduleSlot = new ScheduleSlot()
                     {
                         TrailerId = trailerId,
@@ -33,7 +38,7 @@ namespace ReadModels
                         StartUtc = startTime.ToString("s"),
                         EndTime = endTime.Ticks,
                         EndUtc = endTime.ToString("s"),
-                        IsAvaliable = endTime >= DateTime.Now,
+                        IsAvailable = endTime >= DateTime.Now,
                         Date = day.ToShortDateString()
                     };
                     scheduleSlots.Add(scheduleSlot);
@@ -48,7 +53,7 @@ namespace ReadModels
                     (booking.End > s.StartTime && booking.End <= s.EndTime)
                 ))
                 {
-                    s.IsAvaliable = false;
+                    s.IsAvailable = false;
                 }
             });
             

@@ -10,6 +10,6 @@ namespace Core
         public string StartUtc { get; set; }
         public long EndTime { get; set; }
         public string EndUtc { get; set; }
-        public bool IsAvaliable { get; set; }
+        public bool IsAvailable { get; set; }
     }
 }
