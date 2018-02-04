@@ -7,7 +7,7 @@ export class App {
     configureRouter(config: RouterConfiguration, router: Router) {
         config.title = 'Aurelia';
         config.map([{
-            route: [ '', 'home' ],
+            route: [ 'home' ],
             name: 'home',
             settings: { icon: 'home' },
             moduleId: PLATFORM.moduleName('../home/home'),
@@ -28,12 +28,19 @@ export class App {
             nav: true,
             title: 'Fetch data'
         }, {
-            route: 'trailer',
+            route: [ '', 'trailer' ],
             name: 'trailer',
             settings: { icon: 'time' },
             moduleId: PLATFORM.moduleName('../trailer/trailer'),
             nav: true,
-            title: 'Trailer booking'
+            title: 'Boka släpet'
+        }, {
+            route: 'done',
+            name: 'done',
+            settings: { icon: 'time' },
+            moduleId: PLATFORM.moduleName('../done/done'),
+            nav: true,
+            title: 'Tack'
         }, {
             route: 'book',
             name: 'book',

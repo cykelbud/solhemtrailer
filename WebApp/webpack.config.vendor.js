@@ -33,6 +33,7 @@ module.exports = ({ prod } = {}) => {
                 'aurelia-templating-router',
                 'aurelia-config',
                 'aurelia-api',
+                'aurelia-validation',
                 'fontawesome',
                 'bootstrap',
                 'bootstrap/dist/css/bootstrap.css',

@@ -18,7 +18,8 @@ export function configure(aurelia: Aurelia) {
         // // Add this:
         aurelia.use.plugin(PLATFORM.moduleName('aurelia-api'), (config : Config) => {
             config.registerEndpoint('trailer', 'api/trailer/');
-        });
+        })
+        .plugin(PLATFORM.moduleName('aurelia-validation'));
 
 
     if (IS_DEV_BUILD) {

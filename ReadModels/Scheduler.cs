@@ -14,9 +14,12 @@ namespace ReadModels
 
         public IEnumerable<ScheduleSlot> GetBookingSchedule(Guid trailerId, DateTime startDate, DateTime endDate)
         {
-            var slotsPerDay = 5;
-            var slotLength = 3;
-            var startHrs = 6;
+            var slotsPerDay = 3;
+            var slotLength = 4;
+            var startHrs = 8;
+            //var slotsPerDay = 5;
+            //var slotLength = 3;
+            //var startHrs = 6;
             // generate schedule
             var scheduleSlots = new List<ScheduleSlot>();
             for (var day = startDate; day < endDate; day = day.AddDays(1))

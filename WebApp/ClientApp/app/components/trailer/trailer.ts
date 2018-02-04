@@ -1,8 +1,10 @@
 import { autoinject, bindable, computedFrom } from 'aurelia-framework';
 import { Config, Rest } from 'aurelia-api';
 import { HttpClient } from 'aurelia-fetch-client';
+import { validationMessages, ValidationRules, ValidationController, ValidationControllerFactory, Validator } from 'aurelia-validation';
 import * as moment from 'moment';
 import * as $ from "jquery";
+import { Router } from 'aurelia-router';
 
 
 export enum Step {
@@ -24,9 +26,19 @@ export class Trailer {
     currentWeekStart: string;
     bookRequest: IBookRequest;
     isBooking: boolean;
+    controller : ValidationController;
+    loadingNext :boolean;
+    loadingPrev :boolean;
+    
 
-    constructor(config: Config) {
+    constructor(
+        config: Config, 
+        factory: ValidationControllerFactory, 
+        private validator: Validator,
+        private router: Router) {
+
         this.api = config.getEndpoint('trailer');
+        this.controller = factory.createForCurrentScope(validator);
         this.currentStep = Step.Select;
         this.bookRequest = {
             Email: '',
@@ -39,13 +51,40 @@ export class Trailer {
 
     async attached() {
 
-        //$('.f1 fieldset:first').fadeIn('slow');
+        $('.f1 fieldset:first').fadeIn('slow');
 
         this.currentWeekStart = this.getThisWeekStart();
         await this.getWeekSchedule(this.currentWeekStart);
         await this.getAllBookings();
 
+        ValidationRules
+            .ensure((r :IBookRequest) => r.Email)
+            .required()
+            .withMessage('Ange en giltig epostadress')
+            .email()
+            .withMessage('Ange en giltig epostadress')
 
+            .ensure((r:IBookRequest) => r.Phone)
+            .required()
+            .withMessage('Ange ditt mobilnummer som du kommer ringa upp låset ifrån. ex. 0701234565 endast siffror')
+            .matches(new RegExp('^07+[0-9]{8}$'))
+            .withMessage('Ange ditt mobilnummer som du kommer ringa upp låset ifrån. ex. 0701234565 endast siffror')
+            
+            .ensure((r:IBookRequest) => r.StartDate)
+            .required()
+            .satisfies((start:number, req:IBookRequest) => {
+                return start > 0;
+            })
+            .withMessage('Måste välja en tid!')
+
+            .ensure((r:IBookRequest) => r.EndDate)
+            .required()
+            .satisfies((end:number, req:IBookRequest) => {
+                return end > 0;
+            })
+            .withMessage('Måste välja en tid!')
+
+            .on(this.bookRequest);
 
         // next step
         // $('.f1 .btn-next').on('click', function () {
@@ -120,8 +159,15 @@ export class Trailer {
             let slot = this.selectedSlot;
             this.bookRequest.StartDate = slot.StartTime;
             this.bookRequest.EndDate = slot.EndTime;
+
+            let result = await this.controller.validate({object: this.bookRequest});
+            if (!result.valid){
+                return;
+            }
+
             await this.api.post('booking', this.bookRequest);
             slot.IsAvailable = false;
+            this.router.navigate('done');
 
         } catch(error){
             throw error;
@@ -182,10 +228,11 @@ export class Trailer {
     }
 
     async getWeekSchedule(weekStart: string) {
+        let week = moment(weekStart).isoWeek();
         let dateFirstDayOfWeek = weekStart;
         let dateLastDayOfWeek = moment(weekStart).add(7, 'days').format('YYYY-MM-DD');
 
-        this.scheduleDateDisplayText = dateFirstDayOfWeek + ' till ' + dateLastDayOfWeek;
+        this.scheduleDateDisplayText = 'Vecka ' + week + ': ' + dateFirstDayOfWeek + ' till ' + dateLastDayOfWeek;
 
         let search: IScheduleCriteria =
             {
@@ -196,9 +243,11 @@ export class Trailer {
     }
 
     public async getNextWeekSchedule() {
+        this.loadingNext = true;
         let nextWeekStart = this.getNextWeekStart(this.currentWeekStart);
         await this.getWeekSchedule(nextWeekStart);
         this.currentWeekStart = nextWeekStart;
+        this.loadingNext = false;
     }
 
     public async getPreviousWeekSchedule() {
