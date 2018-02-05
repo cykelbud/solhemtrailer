@@ -72,10 +72,17 @@ namespace solhemtrailer.Controllers
             return Json(Ok());
         }
 
-        [HttpGet("booking")]
-        public IEnumerable<Booking> GettAllBookings()
+        [HttpGet("bookings/{phone}")]
+        public IEnumerable<BookingDto> GetBookings(string phone)
         {
-            return _scheduleQueries.GetAll();
+            return _scheduleQueries.GetBookings(phone).Select(b => new BookingDto()
+            {
+                BookingId = b.BookingId,
+                TrailerId = b.TrailerId,
+                Phone = b.Phone,
+                StartTime = new DateTime(b.Start).ToString("yyyy-MM-dd HH:mm"),
+                EndTime = new DateTime(b.End).ToString("yyyy-MM-dd HH:mm"),
+            });
         }
 
     }
@@ -93,6 +100,15 @@ namespace solhemtrailer.Controllers
     {
         public string StartDate { get; set; }
         public string EndDate { get; set; }
+    }
+
+    public class BookingDto
+    {
+        public long BookingId { get; set; }
+        public Guid TrailerId { get; set; }
+        public string StartTime { get; set; }
+        public string EndTime { get; set; }
+        public string Phone { get; set; }
     }
 
 

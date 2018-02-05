@@ -5,14 +5,14 @@
 
 
 
-            <form class="f1" submit.trigger="book()" >
+            <form class="f1" submit.trigger="book()">
                 <div class="row" style="padding-bottom:50px;">
 
                     <h3 style="margin-bottom:50px;">Boka släpet i solhem</h3>
-                    
+
                     <i class="fa fa-calendar-check-o fa-5x"></i>
                     <h4>1. Boka på websidan</h4>
-                    
+
                     <i class="fa fa-car fa-5x"></i>
                     <h4>2. Åk till släpet vid din bokade tid</h4>
 
@@ -28,7 +28,9 @@
                 </div>
 
                 <div class="row" style="padding-bottom:50px;">
-                    <h3 style="padding-bottom:20px;">Ange kontaktuppgifter, välj tid och boka!</h3>
+                    <h3 style="padding-bottom:20px;">Boka Tid</h3>
+
+                    <h4>Ange kontaktuppgifter, välj tid och boka!</h4>
 
                     <div class="form-group" validation-errors.bind="telErrors" class.bind="telErrors.length ? 'has-error' : ''">
                         <input type="tel" value.bind="bookRequest.Phone & validate" placeholder="Mobiltelefon *" class="form-control">
@@ -36,12 +38,12 @@
                             ${errorInfo.error.message}
                         </span>
                     </div>
-                    <div class="form-group" validation-errors.bind="emailErrors" class.bind="emailErrors.length ? 'has-error' : ''">
+                    <!-- <div class="form-group" validation-errors.bind="emailErrors" class.bind="emailErrors.length ? 'has-error' : ''">
                         <input type="text" value.bind="bookRequest.Email & validate" name="f1-email" placeholder="Email *" class="f1-email form-control">
                         <span class="help-block" repeat.for="errorInfo of emailErrors">
                             ${errorInfo.error.message}
                         </span>
-                    </div>
+                    </div> -->
 
                     <div class="input-group" style="padding-bottom: 20px;">
                         <input type="text" value.bind="selectedStart & validate" disabled class="f1-date form-control">
@@ -69,7 +71,7 @@
                         </span>
                     </div>
 
-                    <div style="overflow-x:auto;">
+                    <div style="overflow-x:auto;padding-bottom:50px;">
                         <table class="table table-striped table-responsive" style="width:100%;">
                             <thead>
                                 <tr>
@@ -86,24 +88,60 @@
                                     </td>
                                     <td repeat.for="slot of day">
                                         <button type="button" style="min-width:0;" class="btn btn-next" click.trigger="select(slot)" disabled.bind="!slot.IsAvailable">
-                                        <i class.bind="slot.IsAvailable? 'fa fa-calendar-o':'fa fa-calendar-times-o'" ></i>
-                                    </button>
+                                            <i class.bind="slot.IsAvailable? 'fa fa-calendar-o':'fa fa-calendar-times-o'"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+                </div>
 
-                    <div class="row">
-                            
-                        <h3 style="padding-bottom:20px;">Visa mina bokningar</h3>
+                <div class="row" style="padding-bottom:50px;">
 
+                    <h3 style="padding-bottom:20px;">Visa mina bokningar</h3>
+                    <p>
+                        <span>Ange telefonnumret för dina bokningar</span>
+                    </p>
 
+                    <div class="form-group" validation-errors.bind="getbookingstelErrors" class.bind="getbookingstelErrors.length ? 'has-error' : ''">
+                        <div class="input-group" style="padding-bottom: 20px;">
+                            <input type="tel" value.bind="bookingsRequest.Phone & validate" placeholder="Mobiltelefon *" class="form-control">
+                            <span class="input-group-btn">
+                                <button type="button" style="height:44px;" class="btn btn-next" disabled.bind="getbookingstelErrors.length > 0" click.trigger="getBookings()">
+                                    <span if.bind="!isBooking">Hämta bokningar</span>
+                                    <i if.bind="isBooking" class="fa fa-circle-o-notch fa-spin"></i>
+                                </button>
+                            </span>
+                        </div>
+                        <span class="help-block" repeat.for="errorInfo of getbookingstelErrors">
+                            ${errorInfo.error.message}
+                        </span>
+
+                        <span class="help-block">
+                            ${notFoundMessage}
+                        </span>
                     </div>
 
+                    <ul>
+                        <li repeat.for="booking of bookings">
+                            <div class="input-group" style="padding-bottom: 20px;">
+                                <input type="text" value.bind="formatBooking(booking)" disabled class="form-control">
+                                <span class="input-group-btn">
+                                    <button type="button" style="height:44px;" class="btn btn-next" click.trigger="cancel(booking)">
+                                        <span if.bind="!isBooking">Avboka tiden</span>
+                                        <i if.bind="isBooking" class="fa fa-circle-o-notch fa-spin"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </li>
+                    </ul>
+
+
+                </div>
             </form>
-            </div>
         </div>
+    </div>
 
 
     </div>

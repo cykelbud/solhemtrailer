@@ -7,5 +7,6 @@ namespace Core
     {
         IEnumerable<ScheduleSlot> GetBookingSchedule(Guid trailerId, DateTime startDate, DateTime endDate);
         IEnumerable<Booking> GetAll();
+        IEnumerable<Booking> GetBookings(string phone);
     }
 }

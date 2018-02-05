@@ -29,6 +29,8 @@ export class Trailer {
     controller : ValidationController;
     loadingNext :boolean;
     loadingPrev :boolean;
+    bookingsRequest : IBookingsRequest;
+    notFoundMessage : string;
     
 
     constructor(
@@ -46,6 +48,7 @@ export class Trailer {
             EndDate: 0,
             StartDate: 0
         };
+        this.bookingsRequest = { Phone:''};
         moment.locale('sv');
     }
 
@@ -58,11 +61,11 @@ export class Trailer {
         await this.getAllBookings();
 
         ValidationRules
-            .ensure((r :IBookRequest) => r.Email)
-            .required()
-            .withMessage('Ange en giltig epostadress')
-            .email()
-            .withMessage('Ange en giltig epostadress')
+            // .ensure((r :IBookRequest) => r.Email)
+            // .required()
+            // .withMessage('Ange en giltig epostadress')
+            // .email()
+            // .withMessage('Ange en giltig epostadress')
 
             .ensure((r:IBookRequest) => r.Phone)
             .required()
@@ -85,6 +88,14 @@ export class Trailer {
             .withMessage('Måste välja en tid!')
 
             .on(this.bookRequest);
+
+        ValidationRules
+            .ensure((req:IBookingsRequest) => req.Phone)
+            .required()
+            .withMessage('Måste ha mobilnummer')
+            .matches(new RegExp('^07+[0-9]{8}$'))
+            .withMessage('Ange mobilnummer 10 siffror utan steck (07XXXXXXXXX)')
+            .on(this.bookingsRequest);
 
         // next step
         // $('.f1 .btn-next').on('click', function () {
@@ -218,19 +229,19 @@ export class Trailer {
     }
 
     getNextWeekStart(weekStart: string) {
-        let nextWeekStart = moment(weekStart).add(8, 'days').format('YYYY-MM-DD');
+        let nextWeekStart = moment(weekStart).add(7, 'days').format('YYYY-MM-DD');
         return nextWeekStart;
     }
 
     getPreviousWeekStart(weekStart: string) {
-        let nextWeekStart = moment(weekStart).add(-8, 'days').format('YYYY-MM-DD');
+        let nextWeekStart = moment(weekStart).add(-7, 'days').format('YYYY-MM-DD');
         return nextWeekStart;
     }
 
     async getWeekSchedule(weekStart: string) {
         let week = moment(weekStart).isoWeek();
         let dateFirstDayOfWeek = weekStart;
-        let dateLastDayOfWeek = moment(weekStart).add(7, 'days').format('YYYY-MM-DD');
+        let dateLastDayOfWeek = moment(weekStart).add(6, 'days').format('YYYY-MM-DD');
 
         this.scheduleDateDisplayText = 'Vecka ' + week + ': ' + dateFirstDayOfWeek + ' till ' + dateLastDayOfWeek;
 
@@ -251,9 +262,11 @@ export class Trailer {
     }
 
     public async getPreviousWeekSchedule() {
+        this.loadingPrev = true;
         let prevWeekStart = this.getPreviousWeekStart(this.currentWeekStart);
         await this.getWeekSchedule(prevWeekStart);
         this.currentWeekStart = prevWeekStart;
+        this.loadingPrev = false;
     }
 
 
@@ -271,6 +284,24 @@ export class Trailer {
         return JSON.stringify(obj);
     }
 
+
+    public async getBookings(){
+        this.notFoundMessage = '';
+        
+        var val = await this.controller.validate({object:this.bookingsRequest});
+        if (!val.valid){
+            return;
+        }
+        this.bookings = await this.api.find('bookings', this.bookingsRequest.Phone);
+        if (this.bookings.length < 1){
+            this.notFoundMessage = 'Inga bokningar hittades';
+        }
+        
+    }
+
+    public formatBooking(booking : IBooking){
+        return 'Tel: ' + booking.Phone + ' Tid: ' + booking.StartTime + ' - ' + booking.EndTime;
+    }
 
 
     // scroll_to_class(element_class: JQuery<HTMLElement>, removed_height: any) {
@@ -308,7 +339,11 @@ interface IBookRequest {
     Phone: string;
 }
 
-class Slot {
+interface IBookingsRequest {
+    Phone: string;
+}
+
+interface Slot {
     TrailerId: string;
     BookingId: number;
     StartTime: number;
@@ -324,8 +359,9 @@ class Slot {
 interface IBooking {
     BookingId: number;
     TrailerId: string;
-    Start: number;
-    End: number;
+    Phone: number;
+    StartTime: string;
+    EndTime: string;
 }
 
 interface IScheduleCriteria {

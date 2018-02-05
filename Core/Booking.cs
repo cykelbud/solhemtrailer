@@ -8,5 +8,6 @@ namespace Core
         public Guid TrailerId { get; set; }
         public long Start { get; set; }
         public long End { get; set; }
+        public string Phone { get; set; }
     }
 }

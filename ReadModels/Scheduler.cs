@@ -42,7 +42,7 @@ namespace ReadModels
                         EndTime = endTime.Ticks,
                         EndUtc = endTime.ToString("s"),
                         IsAvailable = endTime >= DateTime.Now,
-                        Date = day.ToShortDateString()
+                        Date = day.ToString("yyyy-MM-dd")
                     };
                     scheduleSlots.Add(scheduleSlot);
                 }
@@ -68,9 +68,14 @@ namespace ReadModels
             return _bookings;
         }
 
+        public IEnumerable<Booking> GetBookings(string phone)
+        {
+            return _bookings.Where(b => b.Phone == phone);
+        }
+
         public void Handle(TrailerBookedEvent @event)
         {
-            _bookings.Add(new Booking() { BookingId = @event.BookingId, TrailerId = @event.Id, Start = @event.Start, End = @event.End });
+            _bookings.Add(new Booking() { BookingId = @event.BookingId, TrailerId = @event.Id, Start = @event.Start, End = @event.End, Phone = @event.Phone });
         }
 
         public void Handle(TrailerBookingCanceledEvent @event)
