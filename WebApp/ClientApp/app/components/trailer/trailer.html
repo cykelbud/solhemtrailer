@@ -27,7 +27,7 @@
 
                 </div>
 
-                <div class="row" style="padding-bottom:50px;">
+                <div class="row" >
                     <h3 style="padding-bottom:20px;">Boka Tid</h3>
 
                     <h4>Ange kontaktuppgifter, välj tid och boka!</h4>
@@ -50,8 +50,8 @@
                         <span class="input-group-btn">
                             <button type="submit" style="height:44px;" class="btn btn-next" disabled.bind="!canBook">
                                 <span if.bind="!isBooking">Boka tiden</span>
-                                <i if.bind="isBooking" class="fa fa-circle-o-notch fa-spin"></i>
-                            </button>
+                        <i if.bind="isBooking" class="fa fa-circle-o-notch fa-spin"></i>
+                        </button>
                         </span>
                     </div>
 
@@ -97,6 +97,12 @@
                     </div>
                 </div>
 
+            </form>
+
+
+            <form class="f1">
+
+
                 <div class="row" style="padding-bottom:50px;">
 
                     <h3 style="padding-bottom:20px;">Visa mina bokningar</h3>
@@ -110,8 +116,8 @@
                             <span class="input-group-btn">
                                 <button type="button" style="height:44px;" class="btn btn-next" disabled.bind="getbookingstelErrors.length > 0" click.trigger="getBookings()">
                                     <span if.bind="!isBooking">Hämta bokningar</span>
-                                    <i if.bind="isBooking" class="fa fa-circle-o-notch fa-spin"></i>
-                                </button>
+                            <i if.bind="isBooking" class="fa fa-circle-o-notch fa-spin"></i>
+                            </button>
                             </span>
                         </div>
                         <span class="help-block" repeat.for="errorInfo of getbookingstelErrors">
@@ -129,9 +135,9 @@
                                 <input type="text" value.bind="formatBooking(booking)" disabled class="form-control">
                                 <span class="input-group-btn">
                                     <button type="button" style="height:44px;" class="btn btn-next" click.trigger="cancel(booking)">
-                                        <span if.bind="!isBooking">Avboka tiden</span>
-                                        <i if.bind="isBooking" class="fa fa-circle-o-notch fa-spin"></i>
-                                    </button>
+                                        <span if.bind="!canceling">Avboka tiden</span>
+                                <i if.bind="canceling" class="fa fa-circle-o-notch fa-spin"></i>
+                                </button>
                                 </span>
                             </div>
                         </li>

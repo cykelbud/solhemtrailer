@@ -13,14 +13,17 @@ namespace SmsRelay
         private readonly IRestClient _restClient;
         private readonly IEventStore _eventStore;
         private const string TwilioPhoneNo = "+46769437558";
-        private const string TrailerPhoneNo = "+46760450440";
-        private readonly Dictionary<long, int> _storagePositions;
+        //private const string TrailerPhoneNo = "+46760450440";
+        private const string TrailerPhoneNo = "+46701485178";
+
+        // [bookingid, position]
+        private readonly Dictionary<long, PhoneNumberAuthorizedEvent> _storagePositions;
 
         public SmsNotifyer(IRestClient restClient, IEventStore eventStore)
         {
             _restClient = restClient;
             _eventStore = eventStore;
-            _storagePositions = new Dictionary<long, int>();
+            _storagePositions = new Dictionary<long, PhoneNumberAuthorizedEvent>();
         }
 
 
@@ -35,27 +38,28 @@ namespace SmsRelay
 
             var res = _restClient.SendMessage(TwilioPhoneNo, TrailerPhoneNo, bookSms).GetAwaiter().GetResult();
 
-            AddPhoneToRelayPosition(@event.BookingId, pos);
+            AddPhoneToRelayPosition(@event.BookingId, pos, @event.End);
         }
 
 
         public void Handle(TrailerBookingCanceledEvent @event)
         {
             var pos = _storagePositions[@event.BookingId];
-            var paddedPosition = GetPaddedPosition(pos);
+            var paddedPosition = GetPaddedPosition(pos.RelayPosition);
             var cancelBookingSms = $"1234A{paddedPosition}##";
             var res = _restClient.SendMessage(TwilioPhoneNo, TrailerPhoneNo, cancelBookingSms).GetAwaiter().GetResult();
 
             RemovePhoneFromRelayPosition(@event.BookingId);
         }
         
-        private void AddPhoneToRelayPosition(long bookingId, int pos)
+        private void AddPhoneToRelayPosition(long bookingId, int pos, long end)
         {
             var phoneNumberAuthorizedEvent = new PhoneNumberAuthorizedEvent
             {
                 Id = Constants.RelayId,
                 BookingId = bookingId,
-                RelayPosition = pos
+                RelayPosition = pos,
+                EndTime = end
             };
 
             StorePosition(phoneNumberAuthorizedEvent);
@@ -69,12 +73,13 @@ namespace SmsRelay
         private void StorePosition(IEvent @event)
         {
             var existingEvents = _eventStore.LoadEventsFor<object>(Constants.RelayId).ToList();
-            
+            var eventsLoaded = existingEvents.Count();
+
             var newEvents = new List<IEvent>
             {
                 @event
             };
-            _eventStore.SaveEventsFor<object>(Constants.RelayId, existingEvents.Count(), newEvents);
+            _eventStore.SaveEventsFor<object>(Constants.RelayId, eventsLoaded, newEvents);
             existingEvents.Add(@event);
             ApplyAllEvents(existingEvents);
         }
@@ -87,7 +92,7 @@ namespace SmsRelay
                 if (@event.GetType() == typeof(PhoneNumberAuthorizedEvent))
                 {
                     var auth = (PhoneNumberAuthorizedEvent)@event;
-                    _storagePositions[auth.BookingId] = auth.RelayPosition;
+                    _storagePositions[auth.BookingId] = auth;
                 }
                 if (@event.GetType() == typeof(PhoneNumberRemovedEvent))
                 {
@@ -99,9 +104,12 @@ namespace SmsRelay
 
         private int GetNextAvailablePosition()
         {
+            var now = DateTime.Now;
+            var currentPos = _storagePositions.Where(d => d.Value.EndTime < now.Ticks).ToDictionary(t=>t.Key, t=> t.Value.RelayPosition);
+
             for (int pos = 1; pos < 200; pos++)
             {
-                if (!_storagePositions.ContainsValue(pos))
+                if (!currentPos.ContainsValue(pos))
                 {
                     return pos;
                 }

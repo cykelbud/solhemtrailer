@@ -31,6 +31,7 @@ export class Trailer {
     loadingPrev :boolean;
     bookingsRequest : IBookingsRequest;
     notFoundMessage : string;
+    canceling : boolean;
     
 
     constructor(
@@ -241,7 +242,7 @@ export class Trailer {
     async getWeekSchedule(weekStart: string) {
         let week = moment(weekStart).isoWeek();
         let dateFirstDayOfWeek = weekStart;
-        let dateLastDayOfWeek = moment(weekStart).add(6, 'days').format('YYYY-MM-DD');
+        let dateLastDayOfWeek = moment(weekStart).add(7, 'days').format('YYYY-MM-DD');
 
         this.scheduleDateDisplayText = 'Vecka ' + week + ': ' + dateFirstDayOfWeek + ' till ' + dateLastDayOfWeek;
 
@@ -276,8 +277,10 @@ export class Trailer {
 
 
     public async cancel(booking: IBooking) {
+        this.canceling = true;
         await this.api.destroyOne('booking', booking.BookingId);
         await this.getAllBookings();
+        this.canceling = false;
     }
 
     public getJson(obj: any) {

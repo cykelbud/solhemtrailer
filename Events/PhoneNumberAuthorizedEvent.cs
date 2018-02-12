@@ -8,6 +8,7 @@ namespace Events
         public Guid Id { get; set; }
         public int Version { get; set; }
         public long BookingId { get; set; }
+        public long EndTime { get; set; }
         public int RelayPosition { get; set; }
     }
 }
