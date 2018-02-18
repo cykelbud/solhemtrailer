@@ -9,8 +9,8 @@ namespace Core
         /// if there is no handler registered for the command.
         /// </summary>
         /// <typeparam name="TCommand"></typeparam>
-        /// <param name="c"></param>
-        void SendCommand<TCommand>(TCommand c);
+        /// <param name="command"></param>
+        void SendCommand<TCommand>(TCommand command);
 
         /// <summary>
         /// Registers an aggregate as being the handler for a particular

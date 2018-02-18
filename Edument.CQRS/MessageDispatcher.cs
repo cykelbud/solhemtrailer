@@ -17,7 +17,7 @@ namespace Edument.CQRS
     public class MessageDispatcher : IMessageDispatcher
     {
         private Dictionary<Type, Action<object>> commandHandlers =
-            new Dictionary<Type, Action<object>>();      
+            new Dictionary<Type, Action<object>>();
         private Dictionary<Type, List<Action<object>>> eventSubscribers =
             new Dictionary<Type, List<Action<object>>>();
         private IEventStore eventStore;
@@ -37,11 +37,14 @@ namespace Edument.CQRS
         /// if there is no handler registered for the command.
         /// </summary>
         /// <typeparam name="TCommand"></typeparam>
-        /// <param name="c"></param>
-        public void SendCommand<TCommand>(TCommand c)
+        /// <param name="command"></param>
+        public void SendCommand<TCommand>(TCommand command)
         {
             if (commandHandlers.ContainsKey(typeof(TCommand)))
-                commandHandlers[typeof(TCommand)](c);
+            {
+                // call commandhandler
+                commandHandlers[typeof(TCommand)](command);
+            }
             else
                 throw new Exception("No command handler registered for " + typeof(TCommand).Name);
         }
@@ -77,31 +80,38 @@ namespace Edument.CQRS
         {
             if (commandHandlers.ContainsKey(typeof(TCommand)))
                 throw new Exception("Command handler already registered for " + typeof(TCommand).Name);
-            
+
             commandHandlers.Add(typeof(TCommand), command =>
                 {
                     // Create an empty aggregate.
-                    var agg = new TAggregate();
+                    var aggregate = new TAggregate();
+                    aggregate.Id = ((dynamic)command).Id;
 
-                    // Load the aggregate with events.
-                    agg.Id = ((dynamic)command).Id;
-                    var allEvents = eventStore.LoadEventsFor<TAggregate>(agg.Id);
-                    agg.ApplyEvents(allEvents);
-                    
-                    // With everything set up, we invoke the command handler, collecting the
-                    // events that it produces.
+                    // Get all events for this aggregate and apply to aggregate 
+                    // to get to current state.
+                    var allEvents = eventStore.LoadEventsFor<TAggregate>(aggregate.Id);
+                    aggregate.ApplyEvents(allEvents);
+
+                    // Call Handle(command) on all aggregates to yield the event (to store).
                     var resultEvents = new List<IEvent>();
-                    foreach (var e in (agg as IHandleCommand<TCommand>).Handle((TCommand)command))
-                        resultEvents.Add((IEvent)e);
-                    
+                    foreach (var @event in ((IHandleCommand<TCommand>)aggregate).Handle((TCommand)command))
+                    {
+                        resultEvents.Add((IEvent)@event);
+                    }
+
+                    if (resultEvents.Count <= 0)
+                    {
+                        return;
+                    }
+
                     // Store the events in the event store.
-                    if (resultEvents.Count > 0)
-                        eventStore.SaveEventsFor<TAggregate>(agg.Id,
-                            agg.EventsLoaded, resultEvents);
+                    eventStore.SaveEventsFor<TAggregate>(aggregate.Id, aggregate.EventsLoaded, resultEvents);
 
                     // Publish them to all subscribers.
                     foreach (var e in resultEvents)
+                    {
                         PublishEvent(e);
+                    }
                 });
         }
 
@@ -128,7 +138,7 @@ namespace Edument.CQRS
         public void ScanAssembly(Assembly ass)
         {
             // Scan for and register handlers.
-            var handlers = 
+            var handlers =
                 from t in ass.GetTypes()
                 from i in t.GetInterfaces()
                 where i.IsGenericType
@@ -140,7 +150,7 @@ namespace Edument.CQRS
                     AggregateType = t
                 };
             foreach (var h in handlers)
-                this.GetType().GetMethod("AddHandlerFor") 
+                this.GetType().GetMethod("AddHandlerFor")
                     .MakeGenericMethod(h.CommandType, h.AggregateType)
                     .Invoke(this, new object[] { });
 

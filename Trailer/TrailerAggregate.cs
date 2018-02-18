@@ -41,6 +41,7 @@ namespace Trailer
 
         public IEnumerable Handle(CancelBookingCommand command)
         {
+            // Validate business rules
             if (_bookings.All(b => b.BookingId != command.BookingId))
             {
                 throw new BookingDoesNotExist(command.BookingId);
