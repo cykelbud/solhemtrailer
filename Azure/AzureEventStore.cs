@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Core;
@@ -50,19 +49,12 @@ namespace Azure
             var paritionKey = aggregateId.ToString("D");
             var partition = new Partition(_table, paritionKey);
 
-            //var existent = Stream.TryOpenAsync(partition).GetAwaiter().GetResult();
-            //var stream = existent.Found
-            //    ? existent.Stream
-            //    : new Stream(partition);
-            //var stream = Stream.ProvisionAsync(partition).GetAwaiter().GetResult();
-
             if (!Stream.ExistsAsync(partition).GetAwaiter().GetResult())
             {
                 var stream = Stream.ProvisionAsync(partition).GetAwaiter().GetResult();
                 if (!Stream.ExistsAsync(partition).GetAwaiter().GetResult())
                 {
                     throw new AggregateNotFoundException();
-
                 }
             }
 

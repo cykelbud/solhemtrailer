@@ -99,7 +99,7 @@ namespace Edument.CQRS
                         resultEvents.Add((IEvent)@event);
                     }
 
-                    if (resultEvents.Count <= 0)
+                    if (resultEvents.Count == 0)
                     {
                         return;
                     }
@@ -107,10 +107,12 @@ namespace Edument.CQRS
                     // Store the events in the event store.
                     eventStore.SaveEventsFor<TAggregate>(aggregate.Id, aggregate.EventsLoaded, resultEvents);
 
-                    // Publish them to all subscribers.
-                    foreach (var e in resultEvents)
+                    // We are done! trailer booked... but...
+
+                    // ...publish events to subscribers.
+                    foreach (var @event in resultEvents)
                     {
-                        PublishEvent(e);
+                        PublishEvent(@event);
                     }
                 });
         }

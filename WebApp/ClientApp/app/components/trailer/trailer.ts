@@ -18,7 +18,7 @@ export class Trailer {
 
     api: Rest;
     slots: Array<Slot[]>;
-    bookings: IBooking[];
+    @bindable bookings: IBooking[];
     @bindable scheduleDateDisplayText: string;
     @bindable currentStep: number;
     selectedSlot: Slot;

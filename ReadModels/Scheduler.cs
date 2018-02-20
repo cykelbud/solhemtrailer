@@ -12,6 +12,27 @@ namespace ReadModels
     {
         private readonly List<Booking> _bookings = new List<Booking>();
 
+
+        // Handle events
+
+        public void Handle(TrailerBookedEvent @event)
+        {
+            _bookings.Add(new Booking() { BookingId = @event.BookingId, TrailerId = @event.Id, Start = @event.Start, End = @event.End, Phone = @event.Phone });
+        }
+
+        public void Handle(TrailerBookingCanceledEvent @event)
+        {
+            var booking = _bookings.SingleOrDefault(b => b.BookingId == @event.BookingId);
+            if (booking == null)
+            {
+                return;
+            }
+            _bookings.Remove(booking);
+        }
+
+
+        // Queries
+
         public IEnumerable<ScheduleSlot> GetBookingSchedule(Guid trailerId, DateTime startDate, DateTime endDate)
         {
             var slotsPerDay = 3;
@@ -73,20 +94,6 @@ namespace ReadModels
             return _bookings.Where(b => b.Phone == phone);
         }
 
-        public void Handle(TrailerBookedEvent @event)
-        {
-            _bookings.Add(new Booking() { BookingId = @event.BookingId, TrailerId = @event.Id, Start = @event.Start, End = @event.End, Phone = @event.Phone });
-        }
-
-        public void Handle(TrailerBookingCanceledEvent @event)
-        {
-            var booking = _bookings.SingleOrDefault(b => b.BookingId == @event.BookingId);
-            if (booking == null)
-            {
-                return;
-            }
-            _bookings.Remove(booking);
-        }
-
+        
     }
 }

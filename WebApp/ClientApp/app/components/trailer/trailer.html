@@ -17,17 +17,17 @@
                     <h4>2. Åk till släpet vid din bokade tid</h4>
 
                     <i class="fa fa-mobile-phone fa-5x"></i>
-                    <h4>3. Ring låsboxen (0760xxxxxx) för att öppna</h4>
+                    <h4>3. Ring låsboxen (070-1485178) för att öppna</h4>
 
                     <i class="fa fa-key fa-5x"></i>
                     <h4>4. Ta ut nyckel och använd släpet</h4>
 
                     <i class="fa fa-thumbs-o-up fa-5x"></i>
-                    <h4>5. Lämna tillbaka släpet, Lägg nyckeln i låsboxen (0760xxxxxx) inom din bokade tid</h4>
+                    <h4>5. Lämna tillbaka släpet och lägg nyckeln i låsboxen (070-1485178) inom din bokade tid</h4>
 
                 </div>
 
-                <div class="row" >
+                <div class="row">
                     <h3 style="padding-bottom:20px;">Boka Tid</h3>
 
                     <h4>Ange kontaktuppgifter, välj tid och boka!</h4>
@@ -129,29 +129,23 @@
                         </span>
                     </div>
 
-                    <ul>
-                        <li repeat.for="booking of bookings">
+                    <div style="max-width:80%;margin: auto;">
+                        <div class="row" repeat.for="booking of bookings">
                             <div class="input-group" style="padding-bottom: 20px;">
                                 <input type="text" value.bind="formatBooking(booking)" disabled class="form-control">
                                 <span class="input-group-btn">
                                     <button type="button" style="height:44px;" class="btn btn-next" click.trigger="cancel(booking)">
                                         <span if.bind="!canceling">Avboka tiden</span>
-                                <i if.bind="canceling" class="fa fa-circle-o-notch fa-spin"></i>
+                                        <i if.bind="canceling" class="fa fa-circle-o-notch fa-spin"></i>
                                 </button>
                                 </span>
                             </div>
-                        </li>
-                    </ul>
-
-
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
-
-
-    </div>
-
 
 
 </template>

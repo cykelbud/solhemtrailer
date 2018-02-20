@@ -26,6 +26,7 @@ namespace SmsRelay
             _storagePositions = new Dictionary<long, PhoneNumberAuthorizedEvent>();
         }
 
+        // Handle events 
 
         public void Handle(TrailerBookedEvent @event)
         {
@@ -52,6 +53,9 @@ namespace SmsRelay
             RemovePhoneFromRelayPosition(@event.BookingId);
         }
         
+
+        // private functions
+
         private void AddPhoneToRelayPosition(long bookingId, int pos, long end)
         {
             var phoneNumberAuthorizedEvent = new PhoneNumberAuthorizedEvent
